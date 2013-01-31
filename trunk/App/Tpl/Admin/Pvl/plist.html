@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script>
+$(document).ready(function(){
+	$("#add").bind("click",function(){
+		var url="?g=Admin&m=Pvl&a=add";
+		pDialog("",url,600,350);
+		//window.location.href=url;
+	});
+	$("#del").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length>0){
+			_chekList=_chekList.join(',');
+			//pConfirm("提示","确认要删除？",_chekList);
+			if(window.confirm("确认要删除？")){
+				delRole(_chekList);
+			}
+		}else{
+			pAlertN('提示','请选择权限');
+		}
+	});
+	$("#edit").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length<1){
+			pAlertN('提示','请选择权限进行编辑');
+			return false;
+		}
+		if(_chekList.length>1){
+			pAlertN('提示','只能选择一个权限进行编辑');
+			return false;
+		}
+		var url="?g=Admin&m=Pvl&a=edit&p_id="+_chekList.join('');
+		pDialog("",url,600,350);
+		//window.location.href=url;
+	});
+	$("#allCheckData").bind("click",function(){
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				$(this).removeAttr("checked");
+				
+			}else{
+				$(this).attr("checked",true);
+			}
+		});
+	});
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a' /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		
+		var _newHttp=_http+"?"+_usePara.join('&');
+		
+		_newHttp+="&R_NAME="+encodeURI($("#R_NAME").val())+"&R_SHORT_NAME="+encodeURI($("#R_SHORT_NAME").val());
+		
+		window.location.href=_newHttp;
+		
+	});
+});
+
+function ShowCallBack(para){
+	var pid=para["pid"];
+	var url="?g=Admin&m=Role&a=del&r_id="+pid;
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	 //pAlertN("提示","删除用户成功");
+		    	 alert("删除权限成功");
+		    	 window.location.reload();
+		     }else{
+		    	 //pAlertN("提示","删除用户失败"); 
+		    	 alert("删除权限失败");
+		     }
+		   }
+		});
+}
+
+function delLine(r_id){
+	if(window.confirm("确认要删除？")){
+		delRole(r_id);
+	}
+	//pConfirm("提示","确认要删除？",r_id);
+	
+}
+function delRole(pid){
+	var url="?g=Admin&m=Pvl&a=del&p_id="+pid;
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	 //pAlertN("提示","删除用户成功");
+		    	 alert("删除权限成功");
+		    	 window.location.reload();
+		     }else{
+		    	 //pAlertN("提示","删除用户失败"); 
+		    	 alert("删除权限失败");
+		     }
+		   }
+		});
+}
+function editLine(r_id){
+	var url="?g=Admin&m=Pvl&a=edit&p_id="+r_id;
+	pDialog("",url,600,350);
+}
+function lock(p_id){
+	var _chekList=[];
+	if(p_id){
+		_chekList.push(p_id);
+	}else{
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+	}
+	if(_chekList.length>0){
+		_chekList=_chekList.join(',');
+		//pConfirm("提示","确认要删除？",_chekList);
+		if(window.confirm("确认要禁用？")){
+			delRole(_chekList,2);
+		}
+	}else{
+		pAlertN('提示','请选择权限');
+	}
+}
+function unlock(p_id){
+	var _chekList=[];
+	if(p_id){
+		_chekList.push(p_id);
+	}else{
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+	}
+	if(_chekList.length>0){
+		_chekList=_chekList.join(',');
+		//pConfirm("提示","确认要删除？",_chekList);
+		if(window.confirm("确认要启用？")){
+			delRole(_chekList,1);
+		}
+	}else{
+		pAlertN('提示','请选择权限');
+	}
+}
+
+function savelock(p_id,type){
+	var url="?g=Admin&m=Pvl&a=lock&p_id="+p_id+"&state="+type;
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	 //pAlertN("提示","删除用户成功");
+		    	 alert("权限操作成功");
+		    	 window.location.reload();
+		     }else{
+		    	 //pAlertN("提示","删除用户失败"); 
+		    	 alert("权限操作失败");
+		     }
+		   }
+		});
+}
+</script>
+
+</head>
+
+<body>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="24" bgcolor="#353c44"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="6%" height="19" valign="bottom"><div align="center"><img src="__PUBLIC__/images/tb.gif" width="14" height="14" /></div></td>
+                <td width="94%" valign="bottom"><span class="STYLE1"> 权限管理信息列表</span></td>
+              </tr>
+            </table></td>
+            <td><div align="right"><span class="STYLE1">
+               <img src="__PUBLIC__/images/table/user_add.gif" width="16" height="16" align="absmiddle"/> <span id="add">添加 </span>  &nbsp; <img src="__PUBLIC__/images/table/user_del.gif" width="16" height="16" align="absmiddle"/> <span id="del">删除  </span>  &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_edit.gif" width="16" height="16" align="absmiddle"/> <span id="edit">编辑</span>
+               <img src="__PUBLIC__/images/table/user_tingyong.gif" width="15" height="15" align="absmiddle"/> <span id="lock" onclick="lock();">禁用</span> &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_kaiqi.gif" width="15" height="15" align="absmiddle"/> <span id="unlock" onclick="unlock();">启用</span> 
+                </span><span class="STYLE1"> &nbsp;</span></div></td>
+          </tr>
+        </table></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+  	<td align="center">
+  		<form action="" method="post">
+	  		<table  border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+	  			<tr>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">权限名称：</span></td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="text" name="P_NAME" id="P_NAME" value="{$P_NAME}" style="width:100px;"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">权限代码：</span></td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="text" name="P_CODE" id="P_CODE" value="{$P_CODE}" style="width:100px;"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="button" name="submit" id="submit" value="查询"></input> 
+	  				</td>
+	  			</tr>
+	  		</table>
+  		</form>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    
+    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce">
+      <tr>
+        <th width="4%" height="20" bgcolor="d3eaef" class="STYLE10"><div align="center">
+          <input type="checkbox" name="allCheckData" id="allCheckData" />
+        </div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">权限名称</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">权限代码</span></div></th>
+        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">权限类型</span></div></th>
+        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">权限状态</span></div></th>
+        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">权限说明</span></div></th>
+        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">创建时间</span></div></th>
+        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">基本操作</span></div></th>
+      </tr>
+      <volist name="rolelist" id="data">
+		<tr>
+	        <td height="20" bgcolor="#FFFFFF"><div align="center">
+	          <input type="checkbox" name="checkData[]" id="checkData" value="{$data.P_ID}"/>
+	        </div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.P_NAME}</span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.P_CODE}</span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.P_TYPE|getDictValueByKey="PRIVILEGE_TYPE",###}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.P_STATE|getDictValueByKey="PUBLIC_STATE",###}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.P_DESC}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.CREATED_AT|date="Y-m-d",###}</div></td>
+	        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
+	        	<a href="#" onclick="delLine('{$data.P_ID}');return false;">删除</a> | <a href="#" onclick="editLine('{$data.P_ID}');return false;">编辑</a>
+	        	| 
+	        	<if condition="$data.P_STATE eq 1">
+	        		<a href="#" onclick="lock('{$data.P_ID}');return false;">禁用</a>
+	        	<else />
+	        		<a href="#" onclick="unlock('{$data.P_ID}');return false;">启用</a>
+	        	</if>
+	        	
+	        	</div></td>
+      	</tr>
+      </volist>
+    </table>
+    
+    </td>
+  </tr>
+  <tr>
+  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+  </tr>
+    </table></td>
+  </tr>
+</table>
+</body>
+</html>

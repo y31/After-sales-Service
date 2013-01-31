@@ -1,0 +1,98 @@
+@CHARSET "UTF-8";
+
+body {
+	margin-left: 3px;
+	margin-top: 0px;
+	margin-right: 3px;
+	margin-bottom: 0px;
+}
+.STYLE1 {
+	color: #e1e2e3;
+	font-size: 12px;
+}
+.STYLE6 {color: #000000; font-size: 12; }
+.STYLE10 {color: #000000; font-size: 12px; }
+.STYLE19 {
+	color: #344b50;
+	font-size: 12px;
+}
+.STYLE21 {
+	font-size: 12px;
+	color: #3b6375;
+}
+.STYLE22 {
+	font-size: 12px;
+	color: #295568;
+}
+
+.pageToolbar {
+	color: #344b50;
+	font-size: 13px;
+	padding-top:5px;
+}
+.grid{
+	background-color:#a8c7ce;
+}
+
+.grid th{
+	height:20px;
+	background-color:#d3eaef;
+	color: #000000; 
+	font-size: 12px;
+}
+
+A:link {
+ color: #4171CF;
+ TEXT-DECORATION: none
+}
+A:visited {
+ COLOR: #4171CF;
+ TEXT-DECORATION: none
+}
+A:hover {
+ COLOR: #ff7f24;
+ text-decoration: underline;
+}
+A:active {
+ COLOR: #ff7f24;  
+ text-decoration: underline;
+}
+#add{
+	cursor:pointer;
+}
+#del{
+	cursor:pointer;
+}
+#edit{
+	cursor:pointer;
+}
+#lock{
+	cursor:pointer;
+}
+#unlock{
+	cursor:pointer;
+}
+
+legend{background-color:#D3EAEF;border:1px solid #ADD2DA;}
+
+.spanButton{background-color:#D3EAEF;border:1px solid #ADD2DA;font-size:12px;cursor:pointer}
+
+.searchInput{width:100px;}
+.searchSelect{width:100px;}
+
+.searchButton{
+		/*background: url(__PUBLIC__/images/table/search.gif) repeat-y;*/ 
+		line-height: 25px; 
+		height: 25px; 
+		width: 50px; 
+		
+		/*border: none; border-top\left\right\bottom 也可以缩到一句 */
+}
+.searchExport{
+		/*background-image: url(__PUBLIC__/images/table/xls.gif); */
+		line-height: 25px; 
+		height: 25px; 
+		width: 50px; 
+		
+		/*border: none;  border-top\left\right\bottom 也可以缩到一句 */
+}

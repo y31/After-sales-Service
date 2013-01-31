@@ -1,0 +1,185 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+<literal>
+<script>
+$(document).ready(function(){
+	
+	
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		},
+		btnSubmit:"#submit",
+		btnReset:"#resetsubmit",
+		usePlugin:{
+			jqtransform:{}
+		},
+		ajaxPost:true,
+		callback:function(data){
+			showResponse(data.status);
+		}
+	});
+	/*$("#submit").bind("click",function(){
+		$('#orderForm').ajaxSubmit(options); 
+	});
+	
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	function showRequest(formData, jqForm, options) {  
+		if($("#userName").val()==""){
+			return false;
+		}
+		if($("#userPwd").val()==""){
+			return false;
+		}
+		if($("#yzm").val()==""){
+			return false;
+		}
+		var _yzmMsg=$("#yzmMsg").html();
+		if(_yzmMsg.indexOf("通过信息验证")==-1){
+			return false;
+		}
+		 return true;
+	}
+	*/
+	function showResponse(responseText, statusText, xhr, $form)  { 
+		
+		var type='2';
+		var info="系统错误！";
+		var url="?g=Home&m=Member&a=login";
+		var rs=parseInt(responseText);
+		if(rs==1){
+			//登录成功
+			type='1';
+			info="登录成功！";
+			url="{$returnURL}";
+		}else if(rs==3){
+			//用户名错误
+			type='2';
+			info="用户名错误！";
+			
+		}else if(rs==4){
+			//密码错误
+			type='2';
+			info="密码错误！";
+			
+		}else if(rs==5){
+			//密码错误
+			type='2';
+			info="无权限登录！";
+			
+		}
+		window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+		
+	} 
+	$("#image_yz").bind('click',function(){
+		//为了防止IE缓存 增加了tmp参数
+		$(this).attr('src','?g=Admin&m=Main&a=checkImage'+'&tmp='+Math.random());
+	});
+});
+
+</script>
+</literal>
+<style>
+
+.content{
+	background-color:#F9F9F9;
+	width:750px;
+	height:440px;
+	margin-left:95px;
+}
+</style>
+<div id="container">
+<div class="content">
+<form action="?g=Home&m=Member&a=checkuser" method="post" id="orderForm" class="registerform">
+	<div style="padding-top:90px;">
+		<table border=0 cellspacing=0 cellpadding=0 width="100%">
+			<tr>
+				<td width="150px">
+					&nbsp;
+				</td>
+				<td width="70px" align="right">
+					<img src="__PUBLIC__/images/home/login.png" align="absmiddle">
+				</td>
+				<td width="400px" align="left">
+					<div style="padding-top:15px;">
+					<table border="0" >
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;"><input type="text" id="userName" name="userName"  tip="请使用会员名/邮箱/手机" class="inputxt" datatype="*" value="{$LOCATIONUSER}"   nullmsg="请输入会员名/邮箱/手机！" /></td>
+		                    <td><div class="Validform_checktip" >请使用会员名/邮箱/手机登录</div></td>
+		                </tr>
+		                
+		                 <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;"><input type="password" id="userPwd" name="userPwd"  class="inputxt" datatype="*" nullmsg="请输入密码！" /></td>
+		                    <td><div class="Validform_checktip" >请输入密码</div></td>
+		                </tr>
+		                <tr>
+		                <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;">
+		                    	<table border="0" cellspacing="0" cellpadding="0">
+		                    		<tr>
+		                    			<td><input type="text"  name="yzm" id="yzm" style="width:100px;" datatype="*" errmsg="验证码错误" nullmsg="请输入验证码" ajaxurl="?g=Home&m=Member&a=checkYzm"/></td>
+		                    			<td>
+		                    			&nbsp;&nbsp;<image height="30px" align="middle" title="看不清,换一张" id="image_yz" src="?g=Admin&m=Main&a=checkImage" />
+		                    			</td>
+		                    		</tr>
+		                    	</table>
+		                    </td>
+		                    <td><div class="Validform_checktip" id="yzmMsg" style="line-height:40px;height:40px;">请输入验证码</div></td>
+		                </tr>
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;">
+		                    <input type="checkbox" id="useUser" name="useUser" value="y" checked>&nbsp;记住账户名
+		                    &nbsp;&nbsp;<input type="checkbox" id="autologin" name="autologin" value="y">&nbsp;自动登录
+		                    </td>
+		                    <td></td>
+		                </tr>
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;height:40px" valign="bottom" align="center">
+		                    	<input type="hidden" id="sid" name="sid" value="{$sid}">
+		                    	<input type="hidden" id="role" name="role" value="cr">
+		                    	<img src="__PUBLIC__/images/home/login-ok.png" id="submit" align="absmiddle" style="cursor:pointer">
+		                    	<img src="__PUBLIC__/images/home/login-no.png" id="resetsubmit" align="absmiddle" style="cursor:pointer">
+		                    </td>
+		                    <td></td>
+		                </tr>
+		                <tr>
+		                	<td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;height:40px" valign="bottom" align="center">
+		                    	
+		                    </td>
+		                    <td><a href="?g=Home&m=Member&a=getPwd"><font color="#F27F02"><div style="text-decoration:underline">忘记密码</div></font></a></td>
+		                </tr>    
+					
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	</form>
+</div>
+</div>
+		             

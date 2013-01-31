@@ -1,0 +1,201 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+
+
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+
+			},
+			usePlugin:{
+				jqtransform:{}
+			},
+			ajaxPost:true,
+			callback:function(data){
+				alert(data.info);
+				if(data.status=="y"){
+					window.location.href="?g=Admin&m=User&a=uList";
+					/*setTimeout(function(){
+						$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+					},2000);
+					*/
+				}
+			}
+			
+		});
+		/*
+		$('#roleForm').submit(function(){
+			$(this).ajaxSubmit(options); 
+			return false;
+		});
+		//$('#roleForm').ajaxSubmit(options); 
+		var options={
+				 beforeSubmit:  showRequest,  
+				 success:       showResponse  
+		};
+		*/
+	});
+	function showRequest(formData, jqForm, options) { 
+		
+		return true;
+		
+	}
+	function showResponse(rs, statusText, xhr, $form)  { 
+		if(rs=='y'){
+			//pAlertN('提示','用户添加成功');
+			alert('操作成功');
+			window.location.href="?g=Admin&m=User&a=uList";
+			//window.location.reload();
+		}else{
+			//pAlertN('提示','用户添加失败');
+			alert('操作失败');
+		}
+	}
+	//提示信息
+	function userTip(sob,ct){
+		 // 阴影+圆角
+	      $("#"+sob).qtip({
+	        position: {
+	          my: 'bottom left',
+	          at: 'top center'
+	        },
+	        style: {
+	          classes: 'ui-tooltip-blue ui-tooltip-shadow ui-tooltip-rounded'
+	        },
+	        show: {
+				event: false, // Don't specify a show event...
+				ready: true // ... but show the tooltip when ready
+			},
+	        content: ct
+	      });
+	}
+</script>
+
+</head>
+<body class="main">
+
+<div class="wraper">
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >用户管理</legend>
+    		
+    		<table width="100%">
+    			<if condition="$edit neq 'y'">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">会员名</label>：</td>
+                    <td style="width:205px;">
+                     <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_NAME" value="{$uData.U_NAME}" name="data[U_NAME]" class="inputxt" datatype="*"  /></td>
+                    <else />
+                    	<input type="text" id="U_NAME" value="{$uData.U_NAME}" name="data[U_NAME]" class="inputxt" datatype="*"   ajaxurl="?g=Admin&m=User&a=checkUInfo"/></td>
+                    </if>
+                    
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                </if>
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">姓名</label>：</td>
+                    <td style="width:205px;"><input type="text" id="U_RNAME" name="data[U_RNAME]" value="{$uData.U_RNAME}" class="inputxt" datatype="*"  /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <if condition="$edit neq 'y'">
+                 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">密码：</td>
+                    <td style="width:205px;"><input type="password" id="U_PWD" name="data[U_PWD]" class="inputxt" datatype="*6-16" nullmsg="请设置密码！" errormsg="密码范围在6~16位之间！" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:205px;">确认密码：</td>
+                    <td><input type="password" id="U_PWD1" name="data[U_PWD1]" class="inputxt" datatype="*" recheck="data[U_PWD]" nullmsg="请再输入一次密码！" errormsg="您两次输入的账号密码不一致！" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                </if>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td>手机：</td>
+                    <td>
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_MOBILE" name="data[U_MOBILE]" value="{$uData.U_MOBILE}" class="inputxt" datatype="m" errormsg="手机号码格式错误！" /></td>
+                    <else />
+                    	<input type="text" id="U_MOBILE" name="data[U_MOBILE]" value="{$uData.U_MOBILE}" class="inputxt" datatype="m" errormsg="手机号码格式错误！"  ajaxurl="?g=Admin&m=User&a=checkUInfo" /></td>
+                    </if>
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td>邮箱：</td>
+                    <td>
+                     <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_EMAIL" name="data[U_EMAIL]" value="{$uData.U_EMAIL}" class="inputxt" datatype="e" errormsg="请输入您的邮箱！"  /></td>
+                    <else />
+                    	<input type="text" id="U_EMAIL" name="data[U_EMAIL]" value="{$uData.U_EMAIL}" class="inputxt" datatype="e" errormsg="请输入您的邮箱！"   ajaxurl="?g=Admin&m=User&a=checkUInfo"/></td>
+                    </if>
+                    
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                
+                 <tr>
+                    <td class="need"></td>
+                    <td>固定电话：</td>
+                    <td><input type="text" id="U_PHONE" name="data[U_PHONE]" value="{$uData.U_PHONE}" class="inputxt"  /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                
+            </table>
+		</fieldset>
+		<fieldset>
+    		<legend>选择角色</legend>
+    		
+    		<dl>
+    			
+    			<dd><div >
+    				<volist name="roles" id="vo">
+    					<assign name="viewRoleName" value="$vo.R_ID" />
+    					<in name="viewRoleName" value="$rluser">
+    						<assign name="viewRoleCheck" value="checked" />
+    					<else/>
+    						<assign name="viewRoleCheck" value="" />
+    					</in>
+    					<if condition="$vo.R_SHORT_NAME eq 'CR'">
+    						<assign name="viewRoleEnabled" value="disabled" />
+    					<else/>
+    						<assign name="viewRoleEnabled" value="" />
+    					</if>
+    					<input type="checkbox" name="role[]" value="{$vo.R_ID}" {$viewRoleEnabled} {$viewRoleCheck}>&nbsp;&nbsp;<label class="opt">{$vo.R_NAME}</label>
+    					 
+    				</volist>
+    				</div>
+    			</dd>
+    			
+    		</dl>
+    	</fieldset>
+    	<fieldset class="action">
+    	<input type="hidden" name="data[U_ID]" value="{$uData.U_ID}">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>

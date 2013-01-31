@@ -1,0 +1,127 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+<literal>
+<script>
+$(document).ready(function(){
+	
+	
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		},
+		usePlugin:{
+			jqtransform:{}
+		}
+	});
+	$("#submit").bind("click",function(){
+		$('#orderForm').ajaxSubmit(options); 
+	});
+	
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	function showRequest(formData, jqForm, options) {   
+		 return true;
+	}
+	
+	function showResponse(responseText, statusText, xhr, $form)  { 
+		
+		var type='2';
+		var info="系统错误！";
+		var url="?g=Home&m=Member&a=login";
+		var rs=parseInt(responseText);
+		if(rs==1){
+			//登录成功
+			type='1';
+			info="登录成功！";
+			url="{$returnURL}";
+		}else if(rs==3){
+			//用户名错误
+			type='2';
+			info="用户名错误！";
+			
+		}else if(rs==4){
+			//密码错误
+			type='2';
+			info="密码错误！";
+			
+		}
+		window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+		
+	} 
+	
+});
+
+</script>
+</literal>
+<style>
+
+.content{
+	background-color:#F9F9F9;
+	width:750px;
+	height:440px;
+	margin-left:95px;
+}
+</style>
+<div id="container">
+<div class="content">
+<form action="?g=Home&m=Member&a=checkuser" method="post" id="orderForm" class="registerform">
+	<div style="padding-top:90px;">
+		<table border=0 cellspacing=0 cellpadding=0 width="100%">
+			<tr>
+				<td width="190px">
+					&nbsp;
+				</td>
+				<td width="70px" align="right">
+					<img src="__PUBLIC__/images/home/login.png" align="absmiddle">
+				</td>
+				<td width="400px" align="left">
+					<div style="padding-top:15px;">
+					<table border="0" >
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;"><input type="text" id="userName" name="userName" value="" tip="请输入登录账户" class="inputxt" datatype="*"   nullmsg="请输入登录账户！" /></td>
+		                    <td><div class="Validform_checktip"></div></td>
+		                </tr>
+		                
+		                 <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;"><input type="password" id="userPwd" name="userPwd"  class="inputxt" datatype="*" nullmsg="请输入密码！" /></td>
+		                    <td><div class="Validform_checktip"></div></td>
+		                </tr>
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;height:40px" valign="bottom" align="center">
+		                    <br/>
+		                    	<input type="hidden" id="sid" name="sid" value="{$sid}">
+		                    	<img src="__PUBLIC__/images/home/login-ok.png" id="submit" align="absmiddle" style="cursor:pointer">
+		                    	<img src="__PUBLIC__/images/home/login-no.png" align="absmiddle" style="cursor:pointer">
+		                    </td>
+		                    <td></td>
+		                </tr>
+		                    
+					
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	</form>
+</div>
+</div>
+		             

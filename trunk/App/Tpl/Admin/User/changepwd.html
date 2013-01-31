@@ -1,0 +1,118 @@
+<include file="Public:html:inHeader" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+
+
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+
+			},
+			usePlugin:{
+				jqtransform:{}
+			}
+		});
+		
+		$('#roleForm').submit(function(){
+			$(this).ajaxSubmit(options); 
+			return false;
+		});
+		//$('#roleForm').ajaxSubmit(options); 
+		var options={
+				 beforeSubmit:  showRequest,  
+				 success:       showResponse  
+		};
+	});
+	function showRequest(formData, jqForm, options) { 
+		if($("#U_PWD_OLD").val()==""){
+			return false;
+		}
+		
+		if($("#U_PWD").val()==""){
+			return false;
+		}
+		if($("#U_PWD1").val()==""){
+			return false;
+		}
+		return true;
+		
+	}
+	function showResponse(rs, statusText, xhr, $form)  { 
+		if(rs=='p'){
+			alert("旧密码错误");
+			return false;
+		}
+		if(rs=='y'){
+			
+			alert('修改密码成功');
+			$("#U_PWD_OLD").val('');
+			$("#U_PWD").val('');
+			$("#U_PWD1").val('');
+			
+		}else{
+			
+			alert('修改密码失败');
+		}
+	}
+	
+</script>
+
+</head>
+<body class="main">
+
+<div class="wraper">
+	<form action="" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >修改密码</legend>
+    		
+    		<table width="100%">
+    			 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">旧密码：</td>
+                    <td style="width:205px;"><input type="password" id="U_PWD_OLD" name="data[U_PWD_OLD]" class="inputxt" datatype="*" nullmsg="请输入旧密码！"  /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">新密码：</td>
+                    <td style="width:205px;"><input type="password" id="U_PWD" name="data[U_PWD]" class="inputxt" datatype="*" nullmsg="请设置新密码！"  /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:205px;">确认新密码：</td>
+                    <td><input type="password" id="U_PWD1" name="data[U_PWD1]" class="inputxt" datatype="*" recheck="data[U_PWD]" nullmsg="请再输入一次密码！" errormsg="您两次输入的账号密码不一致！" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+               
+                
+            </table>
+		</fieldset>
+		
+    	<fieldset class="action">
+    	<input type="hidden" name="uid" value="{$uid}">
+    	<input type="hidden" name="op" value="1">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>
+
+<include file="Public:html:inFooter" />

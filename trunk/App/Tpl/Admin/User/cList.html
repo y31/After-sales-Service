@@ -1,0 +1,290 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script>
+$(document).ready(function(){
+	$("#add").bind("click",function(){
+		var url="?g=Admin&m=User&a=cadd";
+		pDialog("添加客户",url,700,500);
+		//window.location.href=url;
+	});
+	$("#edit").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length<1){
+			pAlertN('提示','请选择客户进行编辑');
+			return false;
+		}
+		if(_chekList.length>1){
+			pAlertN('提示','只能选择一个客户进行编辑');
+			return false;
+		}
+		var url="?g=Admin&m=User&a=cedit&uid="+_chekList.join('');
+		pDialog("",url,600,400);
+		//window.location.href=url;
+	});
+	$("#del").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length>0){
+			_chekList=_chekList.join(',');
+			pConfirm("提示","确认要删除？",_chekList);
+		}
+	});
+	$("#lock").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length>0){
+			_chekList=_chekList.join(',');
+			pConfirm("提示","确认要停用？",_chekList,lockCallBack);
+		}
+	});
+	$("#unlock").bind("click",function(){
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length>0){
+			_chekList=_chekList.join(',');
+			pConfirm("提示","确认要启用？",_chekList,unLockCallBack);
+		}
+	});
+	
+	$("#allCheckData").bind("click",function(){
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				$(this).removeAttr("checked");
+				
+			}else{
+				$(this).attr("checked",true);
+			}
+		});
+	});
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a' /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		
+		var _newHttp=_http+"?"+_usePara.join('&');
+		
+		_newHttp+="&U_NAME="+encodeURI($("#U_NAME").val())+"&U_RNAME="+encodeURI($("#U_RNAME").val());
+		
+		window.location.href=_newHttp;
+		
+	});
+	
+	$("#sendSms").click(function(){
+		//alert("aaa");
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length<1){
+			pAlertN('提示','请选择客户发送短信');
+			return false;
+		}
+		
+		var url="?g=Admin&m=User&a=sendsms&uid="+_chekList.join(',');
+		pDialog("",url,600,350);
+	});
+	
+});
+
+function ShowCallBack(para){
+	var pid=para["pid"];
+	var url="?g=Admin&m=User&a=del&uid="+pid;
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	 //pAlertN("提示","删除用户成功");
+		    	 alert("删除客户成功");
+		    	 window.location.reload();
+		     }else{
+		    	 //pAlertN("提示","删除用户失败"); 
+		    	 alert("删除客户失败");
+		     }
+		   }
+		});
+}
+
+function lockCallBack(para){
+	var pid=para["pid"];
+	var url="?g=Admin&m=User&a=lock&uid="+pid+"&lock=1";
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	// pAlertN("提示","操作成功");
+		    	 alert("操作成功");
+		    	 window.location.reload();
+		     }else{
+		    	// pAlertN("提示","操作失败"); 
+		    	 alert("操作失败");
+		     }
+		   }
+		});
+}
+
+function unLockCallBack(para){
+	var pid=para["pid"];
+	var url="?g=Admin&m=User&a=lock&uid="+pid+"&lock=0";
+	$.ajax({
+		   type: "GET",
+		   url: url,
+		   success: function(msg){
+		     if(msg=='y'){
+		    	 //pAlertN("提示","操作成功");
+		    	 alert("操作成功");
+		    	 window.location.reload();
+		     }else{
+		    	// pAlertN("提示","操作失败"); 
+		    	 alert("操作失败");
+		     }
+		   }
+		});
+}
+
+function lineDel(u_id){
+	pConfirm("提示","确认要删除？",u_id);
+}
+function lineEdit(u_id){
+	var url="?g=Admin&m=User&a=cedit&uid="+u_id;
+	//window.location.href=url;
+	pDialog("",url,600,400);
+}
+function lineLock(u_id){
+	pConfirm("提示","确认要停用？",u_id,lockCallBack);
+}
+function lineUnLock(u_id){
+	pConfirm("提示","确认要启用？",u_id,unLockCallBack);
+}
+
+</script>
+<style>
+a {color:#FFFFFF}
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="24" bgcolor="#353c44"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="6%" height="19" valign="bottom"><div align="center"><img src="__PUBLIC__/images/tb.gif" width="14" height="14" /></div></td>
+                <td width="94%" valign="bottom"><span class="STYLE1"> 管理人员基本信息列表</span></td>
+              </tr>
+            </table></td>
+            <td><div align="right"><span class="STYLE1">
+             <img src="__PUBLIC__/images/table/user_tingyong.gif" width="15" height="15" align="absmiddle"/> <span id="sendSms" style="cursor:pointer">发送短信</span> &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_add.gif" width="16" height="16" align="absmiddle"/> <span id="add">添加 </span>  &nbsp; <img src="__PUBLIC__/images/table/user_del.gif" width="16" height="16" align="absmiddle"/> <span id="del">删除  </span>  &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_edit.gif" width="16" height="16" align="absmiddle"/> <span id="edit">编辑</span> &nbsp;&nbsp;<img src="__PUBLIC__/images/table/report.gif" width="15" height="15" align="absmiddle"/> <span id="lock">停用</span> &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_kaiqi.gif" width="15" height="15" align="absmiddle"/> <span id="unlock">开启</span>   &nbsp;</span><span class="STYLE1"> &nbsp;</span></div></td>
+          </tr>
+        </table></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+  	<td align="center">
+  		<form action="" method="post">
+	  		<table width="50%" border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+	  			<tr>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">会员名：</span></td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="text" name="U_NAME" id="U_NAME" value="{$U_NAME}"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">姓名：</span></td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="text" name="U_RNAME" id="U_RNAME" value="{$U_RNAME}"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF">
+	  					<input type="button" name="submit" id="submit" value="查询"></input> 
+	  				</td>
+	  			</tr>
+	  		</table>
+  		</form>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    
+    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce" >
+      <tr>
+        <th width="4%" height="20" bgcolor="d3eaef" class="STYLE10"><div align="center">
+          <input type="checkbox" id="allCheckData"/>
+        </div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">会员名</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">姓名</span></div></th>
+        
+        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">联系方式</span></div></th>
+        <th width="16%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">邮箱</span></div></td>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">是否停用</span></div></th>
+        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">基本操作</span></div></th>
+      </tr>
+      <volist name="userList" id="data">
+		<tr>
+	        <td height="20" bgcolor="#FFFFFF"><div align="center">
+	          <input type="checkbox" name="checkData[]" id="checkData_{$data.U_ID}" value="{$data.U_ID}" />
+	        </div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.U_NAME}</span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.U_RNAME}</span></div></td>
+	        
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.U_MOBILE}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.U_EMAIL}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">
+	        <if condition="$data.IS_BLOCK eq 1">
+	        	停用
+	        <else/>
+	        	正常
+	        </if>
+	        </div></td>
+	        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21"><a href="#" onclick="lineDel('{$data.U_ID}');return false;">删除</a> | <a href="#" onclick="lineEdit('{$data.U_ID}');return false;">编辑</a> | <a href="#" onclick="lineLock('{$data.U_ID}');return false;">停用 </a>| <a href="#" onclick="lineUnLock('{$data.U_ID}');return false;">开启</a></div></td>
+      	</tr>
+      </volist>
+    </table>
+    
+    </td>
+  </tr>
+  <tr>
+  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+  </tr>
+    </table></td>
+  </tr>
+</table>
+</body>
+</html>

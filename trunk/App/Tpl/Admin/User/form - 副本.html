@@ -1,0 +1,201 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__JS__/NiceForms/niceforms.js"></script>
+<link rel="stylesheet" type="text/css"  href="__JS__/NiceForms/niceforms-default.css" />
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$('#roleForm').submit(function(){
+			$(this).ajaxSubmit(options); 
+			return false;
+		});
+		//$('#roleForm').ajaxSubmit(options); 
+		var options={
+				 beforeSubmit:  showRequest,  
+				 success:       showResponse  
+		};
+	});
+	function showRequest(formData, jqForm, options) { 
+		if($("#R_NAME").val()==''){
+			userTip('R_NAME','请输入角色名称');
+			return false;
+		}
+		if($("#R_SHORT_NAME").val()==''){
+			userTip('R_SHORT_NAME','请输入角色简称');
+			return false;
+		}
+		return true;
+		
+	}
+	function showResponse(rs, statusText, xhr, $form)  { 
+		alert(rs);
+		if(rs=='y'){
+			//pAlertN('提示','用户添加成功');
+			alert('操作成功');
+			window.location.href="?g=Admin&m=User&a=uList";
+			//window.location.reload();
+		}else{
+			//pAlertN('提示','用户添加失败');
+			alert('操作失败');
+		}
+	}
+	//提示信息
+	function userTip(sob,ct){
+		 // 阴影+圆角
+	      $("#"+sob).qtip({
+	        position: {
+	          my: 'bottom left',
+	          at: 'top center'
+	        },
+	        style: {
+	          classes: 'ui-tooltip-blue ui-tooltip-shadow ui-tooltip-rounded'
+	        },
+	        show: {
+				event: false, // Don't specify a show event...
+				ready: true // ... but show the tooltip when ready
+			},
+	        content: ct
+	      });
+	}
+</script>
+<style>
+body{font-size:12px;}
+.formTable td{
+	height:30px;
+	text-align:left;
+}
+.formTitle{
+	width:50px;
+	height:25px;
+	line-height:25px;
+	border:1px solid #666;
+	margin-left:15px;
+}
+</style>
+</head>
+<body>
+
+<div id="container">
+	<form action="" method="post" class="niceform" id="roleForm">
+		<fieldset>
+    		<legend>用户管理</legend>
+    		<table border="0" class="formTable">
+    		<if condition="$edit neq 'y'">
+    			<tr>
+    				<td>
+    					<label for="R_NAME" ><span class="inputYes">*</span>会员名</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_NAME" name="data[U_NAME]" value="{$uData.U_NAME}">
+    				</td>
+    				<td>
+    					<div class="formTitle" id="U_NAME_TITLE"></div>
+    				</td>
+    			</tr>
+    			</if>
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" ><span class="inputYes">*</span>姓名</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_RNAME" name="data[U_RNAME]" value="{$uData.U_RNAME}">
+    				</td>
+    				<td>
+    					<div id="U_RNAME_TITLE"></div>
+    				</td>
+    			</tr>
+    			<if condition="$edit neq 'y'">
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" ><span class="inputYes">*</span>密码</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_PWD" name="data[U_PWD]">
+    				</td>
+    				<td>
+    					<div id="U_PWD_TITLE"></div>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" ><span class="inputYes">*</span>确认密码</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_PWD1" name="data[U_PWD1]">
+    				</td>
+    				<td>
+    					<div id="U_PWD1_TITLE"></div>
+    				</td>
+    			</tr>
+    			</if>
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" ><span class="inputYes">*</span>手机</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_MOBILE" name="data[U_MOBILE]" value="{$uData.U_MOBILE}">
+    				</td>
+    				<td>
+    					<div id="U_MOBILE_TITLE"></div>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" ><span class="inputYes">*</span>邮箱</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_EMAIL" name="data[U_EMAIL]" value="{$uData.U_EMAIL}">
+    				</td>
+    				<td>
+    					<div id="U_EMAIL_TITLE"></div>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td>
+    					<label for="R_SHORT_NAME" >固定电话</label>
+    				</td>
+    				<td>
+    					<input type="text" id="U_PHONE" name="data[U_PHONE]" value="{$uData.U_PHONE}">
+    				</td>
+    				<td>
+    					<div id="U_PHONE_TITLE"></div>
+    				</td>
+    			</tr>
+    			
+    			
+    		</table>
+		</fieldset>
+		<fieldset>
+    		<legend>选择角色</legend>
+    		
+    		<dl>
+    			
+    			<dd><div >
+    				<volist name="roles" id="vo">
+    					<assign name="viewRoleName" value="$vo.R_ID" />
+    					<in name="viewRoleName" value="$rluser">
+    						<assign name="viewRoleCheck" value="checked" />
+    					<else/>
+    						<assign name="viewRoleCheck" value="" />
+    					</in>
+    					<input type="checkbox" name="role[]" value="{$vo.R_ID}" {$viewRoleCheck}>&nbsp;&nbsp;&nbsp;&nbsp;<label class="opt">{$vo.R_NAME}</label>
+    					 
+    				</volist>
+    				</div>
+    			</dd>
+    			
+    		</dl>
+    	</fieldset>
+    	<fieldset class="action">
+    	<input type="hidden" name="data[U_ID]" value="{$uData.U_ID}">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>

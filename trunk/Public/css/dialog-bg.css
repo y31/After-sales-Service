@@ -1,0 +1,34 @@
+@CHARSET "UTF-8";
+
+.content{
+	background-color:#ffffff;
+	width:500px;
+	padding-right:30px;
+}
+.content table td{
+	
+	height:30px;
+}
+.content table th{
+	
+	height:50px;
+	color:#FF7625;
+}
+.contentline{
+	height:100px;
+	margin-left:10px;
+	background-image:url(../images/home/bg-bx-1.png);
+	background-repeat:repeat-y ;
+}
+.contentline1{
+	height:80px;
+	margin-left:10px;
+	background-image:url(../images/home/bg-bx-1.png);
+	background-repeat:repeat-y ;
+}
+.contentline2{
+	height:60px;
+	margin-left:10px;
+	background-image:url(../images/home/bg-bx-1.png);
+	background-repeat:repeat-y ;
+}

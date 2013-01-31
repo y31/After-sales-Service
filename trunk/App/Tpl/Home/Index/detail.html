@@ -1,0 +1,202 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<literal>
+<script>
+$(document).ready(function(){
+	$("#errorButton").bind('click',function(){
+		var otype=$("#ordertype").val();
+		if(!otype){
+			otype=1;
+		}
+		if(otype==1){
+			window.location.href="?g=Home&m=Index&a=viewbg&sid="+$("#sid").val();
+		}else if(otype==2){
+			window.location.href="?g=Home&m=Index&a=viewbx&sid="+$("#sid").val();
+		}
+		
+	});
+	
+	$("#okButton").bind('click',function(){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=saveBgOrder",
+			   data: "sid="+$("#sid").val()+'&rd'+Math.random(),
+			   //dataType:'json',
+			   success: function(msg){
+				 //alert(msg);
+				 var type='2';
+				 var info="系统错误！";
+				 var url="?g=Home&m=Index&a=index";
+				 if(msg=='n'){
+					
+					info="您下单失败,请返回重新提交数据！";
+					var url="?g=Home&m=Index&a=viewCfOrder&sid="+$("#sid").val();
+				 }else{
+					 type='1'; 
+					 info="您下单成功!<br>编号为:"+msg;
+					 url="?g=Home&m=Order&a=olist";
+				 }
+				 window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+			   },
+			   error:function(msg,err,ob){
+				   
+			   }
+		});
+	});
+	
+});
+
+</script>
+</literal>
+<style>
+
+.content{
+	background-color:#F9F9F9;
+	width:750px;
+	height:380px;
+	margin-left:95px;
+}
+.confirmOrder{
+	width:650px;
+	height:300px;
+	background-color:#F9F9F9;
+}
+#title{
+	width:100px;
+	height:50px;
+	padding-top:25px;
+	padding-left:20px;
+	float:left;
+	font-family: "微软雅黑";
+}
+#titleContent{
+	width:510px;
+	padding-top:20px;
+	float:right;
+}
+#u1{
+	color:#FF7625;
+	font-size:14px;
+	font-weight:bold;
+}
+#u2{
+	color:#FF7625;
+	font-size:15px;
+	font-weight:bold;
+	padding-top:5px;
+}
+#titleContent table{
+	font-size:14px;
+	font-family: "黑体";
+}
+#titleContent table td{
+	height:20px;
+}
+</style>
+<div id="container">
+<div class="content">
+<form  method="post" id="orderForm" class="registerform">
+	<div >
+		<!-- 右边主体 -->
+	  		<div class="confirmOrder">
+	  			<div id="title">
+	  				<img src="__PUBLIC__/images/home/detail-title.png" align="absmiddel">
+	  			</div>
+	  			<div id="titleContent">
+	  				<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	  					<tr>
+	  						<td colspan="5">
+	  							服务类型：
+	  							<span><php> echo ExUse::getOrderType($ordertype)</php>
+	  							<input type="hidden" id="ordertype" value="{$ordertype}">
+	  							</span>
+	  						</td>
+	  					</tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr>
+	  						<td width="30%">
+	  							姓名：
+	  							<span>{$data.U_RNAME}</span>
+	  						</td>
+	  						
+	  						<td width="30%">
+	  							手机：<span>{$data.U_MOBILE}</span>
+	  						</td>
+	  						<td width="40%">
+	  							电话：<span>{$data.U_MOBILE}</span>
+	  						</td>
+	  					</tr>
+	  					<tr>
+	  						<td>
+	  						邮箱：<span>{$data.U_EMAIL}</span>
+	  						</td>
+	  						<td colspan="5">
+	  							地址：
+	  							<span>{$data.AR_L1}&nbsp;{$data.AR_L2}&nbsp;{$data.AR_L3}&nbsp;&nbsp;{$data.O_ADDRESS}</span>
+	  						</td>
+	  						
+	  					</tr>
+	  					<tr>
+	  						
+	  						<td colspan="6">
+	  							要求时间：
+	  							<span>{$data.O_REQ_TIME}</span>
+	  						</td>
+	  						
+	  					</tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr>
+	  						<td colspan="6">
+	  						<table border="0" width="100%" cellspacing="0" cellpadding="0" >
+	  							<tr>
+	  							<td>品牌：<span>{$data.P_BRAND}</span></td>
+		  						<td>品类：<span>{$data.P_CATEGORY}</span></td>
+		  						<td>型号：<span>{$data.P_MODEL}</span></td>
+		  						<td>数量：<span>{$data.P_COUNT}</span></td>
+	  							</tr>
+	  						</table>
+	  						</td>
+	  					</tr>
+	  					<tr>
+	  						<td>购买时间：<span>{$data.P_BUY_TIME}</span></td>
+	  						<td>购买渠道：<span>{$data.P_CHANNEL}</span></td>
+	  						<td>
+	  							订单号：<span>{$data.SO_ID}</span>
+	  						</td>
+	  					</tr>
+	  					
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr>
+	  						<td colspan="5">
+	  						<div>备注：</div>
+	  						<div style="padding-left:30px;padding-top:5px;">{$data.O_MEMO|myOutput=###}</div>
+	  						</td>
+	  						
+	  						
+	  					</tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					<tr><td>&nbsp;</td></tr>
+	  					
+	  					<tr>
+	  						<td >
+	  							
+	  						</td>
+	  						<td colspan="2" align="right">
+	  							<input type="hidden" id="sid" value="{$sid}"> 
+	  							<div style="padding-right:20px;"><img id="errorButton" style="cursor:pointer" src="__PUBLIC__/images/home/bg-err-button.png" align="middle"/>
+	  							<img src="__PUBLIC__/images/home/bg-ok-button.png" id="okButton" align="middle" style="cursor:pointer" />
+	  							</div>
+	  						</td>
+	  						
+	  					</tr>
+	  					
+	  					
+	  				</table>
+	  			</div>
+	  		</div>
+	</div>
+	</form>
+</div>
+</div>
+		             

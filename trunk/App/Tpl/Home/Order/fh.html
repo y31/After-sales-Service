@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/jquery.form.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+
+<script src="__JS__/wdatepicker/WdatePicker.js" type="text/javascript" ></script>
+<script>
+$(document).ready(function(){
+	$(".registerform").Validform({
+		
+		
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		}/*,
+		usePlugin:{
+			jqtransform:{}
+		}*/
+	});
+
+	$('#roleForm111').submit(function(){
+		$(this).ajaxSubmit(options); 
+		return false;
+	});
+	//$('#roleForm').ajaxSubmit(options); 
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+});
+function showRequest(formData, jqForm, options) { 
+	
+	if($("#files").val()==''){
+		//<img src='__JS__/validfrom/images/error.png' align='absmiddle'/>
+		$("#azk_show").html("<font color='red'>请上传安装卡；{$extName}格式，500K以内</font>");alert("b");
+		//alert("b");
+		return false;
+	}else{
+		
+		//检测扩展名
+		var _ename=$("#files").val();
+		
+		var _ename1=_ename.split('.');
+		var _extname=_ename1[_ename1.length-1];
+		var __e="{$extName}";
+		alert(__e);
+		var __e1=__e.split(',');
+		var _isK='n';
+		for(var i=0;i<__e1.length;i++){
+			if(_extname==__e1[i]){
+				_isK='y';
+				break;
+			}
+		}
+		if(_isK=='n'){
+			$("#azk_show").html("<font color='red'>文件格式错误。</font>");
+			return false;
+		}
+		else{
+			$("#azk_show").html("<font color='#AFEA0E'>检测成功</font>");
+			
+		}
+		
+	}
+	/*
+	if($("#P_BAR_CODE").val()==''){
+		$("#cp_show").html("<font color='red'>请输入产品上的条码</font>");
+		return false;
+	}else{
+		$("#cp_show").html("<font color='#AFEA0E'>检测成功</font>");
+		
+	}
+	*/
+	
+	return true;
+	
+}
+function showResponse(rs, statusText, xhr, $form)  { 
+	if(rs=="size"){
+		$("#azk_show").html("<font color='red'>文件太大；大小在500K以内</font>");
+		//return false;
+	}if(rs=="file"){
+		$("#azk_show").html("<font color='red'>文件上传失败</font>");
+		//return false;
+	}
+	else{
+		alert(rs);
+	}
+}
+
+function check(){
+	if($("#files").val()==''){
+		//<img src='__JS__/validfrom/images/error.png' align='absmiddle'/>
+		$("#azk_show").html("<font color='red'>请上传安装卡；{$extName}格式，500K以内</font>");alert("b");
+		//alert("b");
+		return false;
+	}else{
+		
+		//检测扩展名
+		var _ename=$("#files").val();
+		
+		var _ename1=_ename.split('.');
+		var _extname=_ename1[_ename1.length-1];
+		var __e="{$extName}";
+		alert(__e);
+		var __e1=__e.split(',');
+		var _isK='n';
+		for(var i=0;i<__e1.length;i++){
+			if(_extname==__e1[i]){
+				_isK='y';
+				break;
+			}
+		}
+		if(_isK=='n'){
+			$("#azk_show").html("<font color='red'>文件格式错误。</font>");
+			return false;
+		}
+		else{
+			$("#azk_show").html("<font color='#AFEA0E'>检测成功</font>");
+			
+		}
+		
+	}
+	return true;
+}
+</script>
+<style type="text/css">
+body{background-color:#FFF}
+.inputYes{color:#FF0000}
+</style>
+</head>
+<body>
+<div  style="padding-top:15px;">
+<form action="" method="post" id="roleForm" class="registerform"  enctype="multipart/form-data" onsubmit="return check();">
+<fieldset>
+	<table border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			
+            <td style=""><span class="inputYes">*</span>安装卡：</td>
+            <td style="">
+             <input type="file"  name="files" id="files"   class="inputxt"value="" />
+                	
+            <td><div class="Validform_checktip" id="azk_show">扫描或拍摄，{$extName}格式，500K以内</div></td>
+		</tr>
+		<tr>
+			
+            
+            <td style=""><span class="inputYes">*</span>产品条码：</td>
+            <td style="width:150px;"><input type="text" id="P_BAR_CODE" value="" name="data[P_BAR_CODE]" class="inputxt" datatype="*"  /></td>
+            <td><div class="Validform_checktip" id="cp_show">请输入产品上的条码</div></td>
+		</tr>
+		<tr>
+			
+           
+            <td style="">安装时间：</td>
+            <td style="">
+            <input style="padding:4px 2px" onclick="WdatePicker({el:'O_SRV_TIME',dateFmt:'yyyy-MM-dd HH:mm'})" type="text" id="O_SRV_TIME" name="data[O_SRV_TIME]" value="" readonly>
+			<img onclick="WdatePicker({el:'O_SRV_TIME',dateFmt:'yyyy-MM-dd HH:mm'})" src="__JS__/wdatepicker/skin/datePicker.gif" width="16" height="22" align="absmiddle">
+           </td>
+            <td><div class="Validform_checktip">请选择安装完成时间</div></td>
+		</tr>
+		<tr>
+			
+           
+            <td style="">备注</td>
+            <td style=""><textarea rows="3" cols="60" id="O_ST_MEMO" name="data[O_ST_MEMO]"></textarea></td>
+            <td><div class="Validform_checktip">其他说明(200字以内)</div></td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align:center">
+					<input type="hidden" name="o_id" value="{$o_id}">
+					<input type="hidden" name="op" value="1">
+    				<input style="width:60px;height:30px;text-align:center;padding:2px 4px;" type="submit"  value="确认完成" />
+			</td>
+		</tr>
+	</table>
+</fieldset>
+</form>
+</div>
+</body>
+
+</html>

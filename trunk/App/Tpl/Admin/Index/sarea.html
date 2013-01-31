@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+
+<script>
+$(document).ready(function(){
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a'  || _t=='t' || _t=='f1' || _t=='f2' /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		
+		var _newHttp=_http+"?"+_usePara.join('&');
+		
+		_newHttp+="&AR_L1="+encodeURI($("#AR_L1").val())+"&AR_L2="+encodeURI($("#AR_L2").val())+"&AR_L3="+encodeURI($("#AR_L3").val());
+		
+		window.location.href=_newHttp;
+		
+	});
+});
+function check(uid,uname){
+	var f1="{$f1}";
+	var f2="{$f2}";
+	if(parent.document.getElementById(f1)){
+		parent.document.getElementById(f1).value=uid;
+	}
+	if(parent.document.getElementById(f2)){
+		parent.document.getElementById(f2).value=uname;
+	}
+	parent.dialogClose();
+}
+</script>
+<style>
+a {color:#FFFFFF}
+.searchInput{width:60px;}
+</style>
+</head>
+
+<body>
+<br />
+<fieldset>
+    <legend ></legend>
+    
+    <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  
+	  <tr>
+	  	<td align="center">
+	  		<form action="" method="post">
+		  		<table  border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+		  			<tr>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">省市：</span></td>
+		  				<td bgcolor="#FFFFFF" >
+		  					<input class="searchInput" type="text" name="AR_L1" id="AR_L1" value="{$AR_L1}"></input>
+		  				</td>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">市辖区：</span></td>
+		  				<td bgcolor="#FFFFFF">
+		  					<input class="searchInput" type="text" name="AR_L2" id="AR_L2" value="{$AR_L2}"></input>
+		  				</td>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">区县：</span></td>
+		  				<td bgcolor="#FFFFFF">
+		  					<input class="searchInput" type="text" name="AR_L3" id="AR_L3" value="{$AR_L3}"></input>
+		  				</td>
+		  				<td bgcolor="#FFFFFF">
+		  					<input type="button" name="submit" id="submit" value="查询"></input> 
+		  				</td>
+		  			</tr>
+		  		</table>
+	  		</form>
+	  	</td>
+	  </tr>
+	  <tr>
+	    <td>
+	    
+	    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce" >
+	      <tr>
+	       
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">省市</span></div></th>
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">市辖区</span></div></th>
+	        
+	        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">区县</span></div></th>
+	        <th width="14%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">基本操作</span></div></th>
+	      </tr>
+	      <volist name="userList" id="data">
+			<tr>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.AR_L1}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.AR_L2}</span></div></td>
+		        
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.AR_L3}</div></td>
+		        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21"><a href="#" onclick="check('{$data.AR_ID}','{$data.AR_ADDRESS}');return false;">选择</a> </div></td>
+	      	</tr>
+	      </volist>
+	    </table>
+	    
+	    </td>
+	  </tr>
+	  <tr>
+	  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+	  </tr>
+    </table>
+</fieldset>
+</body>
+</html>

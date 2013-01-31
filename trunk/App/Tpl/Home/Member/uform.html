@@ -1,0 +1,191 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<script type="text/javascript" src="__JS__/NiceForms/niceforms.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="__JS__/NiceForms/niceforms-default.css" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+<literal>
+<script>
+$(document).ready(function(){
+
+
+	$("#submitImage").bind("click",function(){
+		$('#orderForm').ajaxSubmit(options); 
+	});
+	
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	function showRequest(formData, jqForm, options) {  
+		
+		if($("#U_PWD_OLD").val()==""){
+			$("#Validform_checktip_U_PWD_OLD").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>请输入旧密码</a>");
+			return false;
+		}else{
+			$("#Validform_checktip_U_PWD_OLD").html("<img src='__PUBLIC__/js/validfrom/images/right.png' />");
+		}
+		if($("#U_PWD").val()==""){
+			$("#Validform_checktip_U_PWD").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>请输入新密码</a>");
+			return false;
+		}else{
+			$("#Validform_checktip_U_PWD").html("<img src='__PUBLIC__/js/validfrom/images/right.png' />");
+		}
+		if($("#U_PWD1").val()==""){
+			$("#Validform_checktip_U_PWD1").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>请输入重复密码</a>");
+			return false;
+		}else{
+			$("#Validform_checktip_U_PWD1").html("<img src='__PUBLIC__/js/validfrom/images/right.png' />");
+		}
+		if($("#U_PWD1").val()!=$("#U_PWD").val()){
+			$("#Validform_checktip_U_PWD1").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>两次输入的密码不一致</a>");
+			return false;
+		}else{
+			$("#Validform_checktip_U_PWD1").html("<img src='__PUBLIC__/js/validfrom/images/right.png' />");
+		}
+		
+		 return true;
+	}
+	
+	function showResponse(rs, statusText, xhr, $form)  { 
+		
+		var type='2';
+		var info="修改密码失败！";
+		var url="?g=Home&m=Member&a=upwd";
+		if(rs=='p'){
+			info="输入旧密码错误！";
+			$("#Validform_checktip_U_PWD_OLD").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>"+info+"</a>");
+			return false;
+		}
+		if(rs=="n"){
+			userTip('submitImage','修改密码失败！');
+			return false;
+		}
+		
+		if(rs=='SRVTEAM'){
+			info="修改密码成功！";
+			type='1';
+			url="?g=Home&m=Order&a=srvlist";
+		}
+		if(rs=='CR'){
+			info="修改密码成功！";
+			type='1';
+			url="?g=Home&m=Order&a=olist";
+		}
+		window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+		
+	} 
+	
+});
+function userTip(sob,ct){
+	 // 阴影+圆角
+    $("#"+sob).qtip({
+  	 	position: {
+           my: 'bottom left',
+           at: 'top center'
+      },
+      style: {
+        classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+      },
+      show: {
+			event: 'click', // Don't specify a show event...
+			ready: true // ... but show the tooltip when ready
+		},
+      content: {
+   	   text:ct,
+   	   title:{
+   	    	  text:"提示信息", 
+   	    	  button:"关闭"
+   	       }
+      },
+      hide:false
+      
+    });
+}
+</script>
+</literal>
+<style>
+
+.content{
+	background-color:#F9F9F9;
+	width:750px;
+	height:440px;
+	
+}
+</style>
+<div id="container">
+<div class="content" style="height:380px;">
+<form action="" method="post" id="orderForm"  class="niceform">
+	<div style="padding-top:20px;">
+		<table border=0 cellspacing=0 cellpadding=0 width="100%">
+			<tr>
+				
+				<td colspan="3" align="left" valign="bottom">
+				<div style="padding-left:20px;height:20px;color:#FF7625;font-weight:bold;font-size:15px;">修改密码
+				
+				</div>
+				
+				</td>
+			</tr>
+			<tr>
+			<td colspan="3" valign="top">
+				
+				<div style="height:2px;width:150px;background-color:#FF7625;margin-left:20px;">
+				
+				</div>
+				
+				
+				</td>
+			</tr>
+			<tr>
+				<td width="120px">
+					
+				</td>
+				
+				<td  align="left">
+					<div style="padding-top:15px;">
+					<table border="0" >
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:80px;line-height:30px;">旧 密 码</td>
+		                    <td style=""><input type="password" id="U_PWD_OLD" name="data[U_PWD_OLD]" class="inputxt" datatype="*" nullmsg="请输入旧密码！"  /></td>
+		                    <td><div class="Validform_checktip" id="Validform_checktip_U_PWD_OLD">请输入旧密码</div></td>
+		                </tr>
+		                
+		                 <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:80px;line-height:30px;">新 密 码</td>
+		                    <td style="width:;"><input type="password" id="U_PWD" name="data[U_PWD]" class="inputxt" datatype="*" nullmsg="请设置新密码！"  /></td>
+		                    <td><div class="Validform_checktip" id="Validform_checktip_U_PWD">请输入新密码</div></td>
+		                </tr>
+		                 <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:80px;line-height:30px;">重复新密码</td>
+		                    <td><input type="password" id="U_PWD1" name="data[U_PWD1]" class="inputxt" datatype="*" recheck="data[U_PWD]" nullmsg="请再输入一次密码！" errormsg="您两次输入的密码不一致！" /></td>
+		                    <td><div class="Validform_checktip" id="Validform_checktip_U_PWD1">请重复输入密码</div></td>
+		                </tr>
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="width:205px;height:40px" valign="bottom" align="center">
+		                    <br/>
+		                    	<input type="hidden" name="uid" value="{$uid}">
+    							<input type="hidden" name="op" value="1">
+    							<div style="display:none"><input type="submit" id="sumit" name="sumit" ></div>
+		                    	<img src="__PUBLIC__/images/home/bg-ok-button.png" id="submitImage" align="absmiddle" style="cursor:pointer">
+		                    </td>
+		                    <td></td>
+		                </tr>
+		                    
+					
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	</form>
+</div>
+</div>

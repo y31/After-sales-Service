@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<style>
+body{font-size:12px;}
+.exportMainDiv{	
+	width:280px;
+	height:250px;
+	margin:0 auto;
+	padding-top:0x;
+}
+.exportMainDiv #etTitle{
+	padding-top:20px;
+	font-size:15px;
+	font-family:'宋体';
+	color:#6B6C6D;
+	padding-left:50px;
+}
+.exportMainDiv #etImage{
+	padding-top:10px;
+	padding-left:80px;
+}
+.exportMainDiv #etImage img{
+	border:0px;
+}
+</style>
+</head>
+<body>
+
+<div class="exportMainDiv">
+	<if condition="$path eq 'n'" >
+	<div style="width:150px;height:30px;border:0px solid #2E5168;padding-top:20px;padding-left:50px;margin-top:10px;margin-left:20px;color:#0C90E7;font-size:15px;">
+		数据导出失败！
+	</div>
+	<else />
+	<div id="etTitle">数据导出成功,请点击下载...</div>
+	<div id="etImage">
+		<a href="{$path}"><img src="__PUBLIC__/images/download.png" align="absmiddle"/></a>
+	</div>
+	</if>
+</div>
+</body>
+</html>

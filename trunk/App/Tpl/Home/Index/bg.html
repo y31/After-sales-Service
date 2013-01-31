@@ -1,0 +1,586 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__JS__/NiceForms/niceforms.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="__JS__/NiceForms/niceforms-default.css" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<literal>
+<script>
+$(document).ready(function(){
+	
+	
+	$("#submitImage").bind("click",function(){
+		$('#orderForm').ajaxSubmit(options); 
+	});
+	
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	function showRequest(formData, jqForm, options) {    
+		if($("#U_RNAME").val()==""){
+			userTip('U_RNAME','请输入姓名');
+			return false;
+		}
+		if($("#U_MOBILE").val()==""){
+			userTip('U_MOBILE','请输入手机');
+			return false;
+		}
+		else{
+			var _re=/^\d{11}$/;
+			if(!_re.test($("#U_MOBILE").val())){
+				userTip('U_MOBILE','手机格式错误');
+				return false;
+			}
+		}
+		if($("#U_EMAIL").val()==""){
+			userTip('U_EMAIL','请输入邮箱');
+			return false;
+		}else{
+			var _re=/^([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\-|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+			/*if($("#U_EMAIL").val().indexOf('@')==-1){
+				userTip('U_EMAIL','邮箱格式错误');
+				return false;
+			}
+			*/
+			if(!_re.test($("#U_EMAIL").val())){
+				userTip('U_EMAIL','邮箱格式错误');
+				return false;
+			}
+		}
+		
+		if($("#U_PWD").val()==""){
+			userTip('U_PWD','请输入查询密码');
+			return false;
+		}
+		
+		if($("#U_PWD1").val()==""){
+			userTip('U_PWD1','请输入确认密码');
+			return false;
+		}
+		
+		if($("#U_PWD").val()!=$("#U_PWD1").val()){
+			userTip('U_PWD1','请输入查询与确认密码不符');
+			return false;
+		}
+		
+		if($("#AR_L1").val()==''){
+			userTip('AR_L1','请选择省市');
+			return false;
+		}
+		if($("#AR_L2").val()==''){
+			userTip('AR_L2','请选择市辖区');
+			return false;
+		}
+		if($("#AR_L3").val()==''){
+			userTip('AR_L3','请选择区县');
+			return false;
+		}
+		
+		if($("#O_ADDRESS").val()==''){
+			userTip('O_ADDRESS','请输入详细地址');
+			return false;
+		}
+		
+		if($("#P_BRAND").val()==''){
+			userTip('P_BRAND','请选择品牌');
+			return false;
+		}
+		if($("#P_CATEGORY").val()==''){
+			userTip('P_CATEGORY','请选择产品类型');
+			return false;
+		}
+		if($("#P_MODEL").val()==''){
+			userTip('P_MODEL','请选择产品型号');
+			return false;
+		}
+		if($("#P_CHANNEL_ID").val()==''){
+			userTip('P_CHANNEL_ID','请选择购买渠道');
+			return false;
+		}
+		if($("#P_BUY_TIME").val()==''){
+			userTip('P_BUY_TIME','请选择购买时间');
+			return false;
+		}
+		
+		 return true;
+	}
+	//使用列子在  http://craigsworks.com/projects/qtip2/demos/
+	function userTip(sob,ct){
+		 // 阴影+圆角
+	      $("#"+sob).qtip({
+	        position: {
+	          my: 'bottom left',
+	          at: 'top center'
+	        },
+	        style: {
+	          classes: 'ui-tooltip-blue ui-tooltip-shadow ui-tooltip-rounded'
+	        },
+	        show: {
+				event: false, // Don't specify a show event...
+				ready: true // ... but show the tooltip when ready
+			},
+	        content: ct
+	      });
+	}
+	function showResponse(responseText, statusText, xhr, $form)  { 
+		//转到再次确认页面
+		/*if(responseText=='y'){
+			window.location.href="?g=Home&m=Index&a=viewCfOrder&sid="+responseText;
+		}else{
+			alert("提交失败");
+		}
+		*/
+		//需要后台验证邮箱是否唯一
+		//alert(responseText);
+		var islogin="{$islogin}";
+		if(islogin && islogin=='y'){
+			//登录后不判断
+			window.location.href="?g=Home&m=Index&a=viewCfOrder&sid="+responseText;
+		}else{
+			if(responseText=='M'){
+				userTip('U_MOBILE','手机已存在');
+				return false;
+			}
+			
+			else if(responseText=='E'){
+				userTip('U_EMAIL','邮箱已存在');
+				return false;
+			}
+			else{
+				window.location.href="?g=Home&m=Index&a=viewCfOrder&sid="+responseText;
+			}
+		}
+		
+		
+	} 
+	$("#U_EMAIL").focus(function(){
+		userTip('U_EMAIL','邮箱是重要输入项,作为登录账号使用');
+		
+	});
+	$("#P_BRAND").bind('change',function(){
+		if($(this).val()==''){
+			return false;
+		}
+		$("#P_CATEGORY").empty();
+		$("#P_CATEGORY").append('<option value="">--产品类型--</option>');
+		getProduct('P_BRAND',$(this).val(),'P_CATEGORY');
+	});
+	$("#P_CATEGORY").bind('change',function(){
+		if($(this).val()==''){
+			return false;
+		}
+		$('#P_MODEL').empty();
+		$('#P_MODEL').append('<option value="">--产品型号--</option>');
+		getProduct('P_BRAND|P_CATEGORY',$("#P_BRAND").val()+"|"+$(this).val(),'P_MODEL');
+	});
+	function getProduct(stName,st,fl){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=getProduct",
+			   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+			   dataType:'json',
+			   success: function(msg){
+				 if(msg.sucess=='y'){
+					var f=msg.fl;
+					var data=msg.data;
+					var _html=[];
+					var k;
+					for (k in data){
+						_html.push('<option value="'+data[k]+'">'+data[k]+'</option>');
+					}
+					$("#"+f).append(_html.join(''));
+				 }
+			     
+			   }
+		});
+	}
+	//得到地区
+	$("#AR_L1").bind('change',function(){
+		if($(this).val()==''){
+			return false;
+		}
+		$("#AR_L2").empty();
+		$("#AR_L2").append('<option value="">--市辖区--</option>');
+		getArea('AR_L1',$(this).val(),'AR_L2');
+	});
+	$("#AR_L2").bind('change',function(){
+		if($(this).val()==''){
+			return false;
+		}
+		$('#AR_L3').empty();
+		$('#AR_L3').append('<option value="">--区县--</option>');
+		getArea('AR_L1|AR_L2',$("#AR_L1").val()+"|"+$(this).val(),'AR_L3');
+	});
+	function getArea(stName,st,fl){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=getArea",
+			   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+			   dataType:'json',
+			   success: function(msg){
+				 if(msg.sucess=='y'){
+					var f=msg.fl;
+					var data=msg.data;
+					var _html=[];
+					var k;
+					for (k in data){
+						_html.push('<option value="'+data[k]+'">'+data[k]+'</option>');
+					}
+					
+					$("#"+f).append(_html.join(''));
+					
+					for (k in data){
+						_html.push('<li><a href="javascript:;">'+data[k]+'</a></li>');
+					}
+					$("#"+f+"_1").append(_html.join(''));
+				 }
+			     
+			   }
+		});
+	}
+	$("#P_CHANNEL_ID").bind('change',function(){
+		if($(this).val()>0){
+			var txt=$(this).find("option:selected").text();  
+			$("#P_CHANNEL").val(txt);
+		}else{
+			$("#P_CHANNEL").val('');
+		}
+		
+	});
+});
+function setArea(stName,st,fl,v){
+	$.ajax({
+		   type: "POST",
+		   url: "?g=Home&m=Index&a=getArea",
+		   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+		   dataType:'json',
+		   success: function(msg){
+			 if(msg.sucess=='y'){
+				var f=msg.fl;
+				var data=msg.data;
+				var _html=[];
+				var k;
+				for (k in data){
+					var _sel='';
+					if(v==data[k]){
+						_sel="selected";
+					}
+					_html.push('<option value="'+data[k]+'"  '+_sel+'>'+data[k]+'</option>');
+				}
+				
+				$("#"+f).append(_html.join(''));
+			 }
+		     
+		   }
+	});
+}
+
+function setProduct(stName,st,fl,v){
+	$.ajax({
+		   type: "POST",
+		   url: "?g=Home&m=Index&a=getProduct",
+		   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+		   dataType:'json',
+		   success: function(msg){
+			 if(msg.sucess=='y'){
+				var f=msg.fl;
+				var data=msg.data;
+				var _html=[];
+				var k;
+				
+				for (k in data){
+					var _sel='';
+					if(v==data[k]){
+						_sel="selected";
+					}
+					_html.push('<option value="'+data[k]+'" '+_sel+'>'+data[k]+'</option>');
+				}
+				
+				$("#"+f).append(_html.join(''));
+			 }
+		     
+		   }
+	});
+}
+function showLogin(){
+	var url="?g=Home&m=Member&a=loginform";
+	pDialog('',url,500,380);
+}
+</script>
+<style>
+#container select{
+	width:120px;
+}
+#sumit{
+	display:none;
+	width:0px;
+	height:opx;
+}
+</style>
+</literal>
+<div id="container">
+<div class="content">
+<form action="?g=Home&m=Index&a=confirmOrder" method="post" id="orderForm" class="niceform">
+	<div style="height:37px;background-color:#DCDCDC;width:760px;">
+		<table border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td>
+					<img src="__PUBLIC__/images/home/bg-111.png" style="border:0px;padding-top:1px;margin-top:1px;" height='37px' width="95px" align="absmiddle"/>
+				</td>
+				<td>
+					<img src="__PUBLIC__/images/home/bx-111.png" style="border:0px;cursor:pointer" height='39px' width="110px" align="absmiddle" onclick="window.location.href='?g=Home&m=Index&a=viewbx'"/>
+				</td>
+			</tr>
+		</table>
+		
+		
+	</div>
+	<div  id="tab_1"  style="display:block">
+		<table border=0 cellspacing=0 cellpadding=0 width="100%">
+			<tr>
+				<th widht="5"></th>
+				<th  align="left" colspan='2'>
+					<table border="0" width="100%">
+						<tr>
+							<td width="50%">顾客信息
+							<!--<if condition="$islogin neq 'y'" >&nbsp;&nbsp;<a href="?g=Home&m=Member&a=login&sid={$orderNO}" >[登录]</a></if></div>  -->
+							</td>
+							<td align="left" width="50%"></div></td>
+						</tr>
+					</table>
+				</th>
+			</tr>
+			<tr>
+				<td width="5"></td>
+				<td width="15"><div class="contentline"></div></td>
+				<td>
+				  <div style="margin-left:20px;">
+					<table border=0 cellspacing=0 cellpadding=0 width="100%">
+						<tr>
+							<td width="10%"><span class="inputYes">*</span>姓名：</td>
+							<td width="20%"><input type="text" style="width:120px;"  id="U_RNAME" name="data[U_RNAME]" value="{$seData.U_RNAME|default=''}"></td>
+							<td width="10%"><span class="inputYes">*</span>手机：</td>
+							<td width="20%"><input type="text" style="width:120px;" id="U_MOBILE" onkeyup="this.value=this.value.replace(/\D/g,'');" name="data[U_MOBILE]" value="{$seData.U_MOBILE|default=''}"></td>
+							<td width="10%">固定电话：</td>
+							<td width="20%"><input type="text" style="width:120px;" id="U_PHONE" name="data[U_PHONE]" value="{$seData.U_PHONE|default=''}"></td>
+						</tr>
+						<tr>
+							<td><span class="inputYes">*</span>邮箱：</td>
+							<td><input type="text" id="U_EMAIL" style="width:120px;" name="data[U_EMAIL]" value="{$seData.U_EMAIL|default=''}"></td>
+							<td>
+							<!-- 如果是登录 不显示设置密码 -->
+							<if condition="$islogin neq 'y'" >
+							<span class="inputYes">*</span>查询密码：</td>
+							<td><input type="password" id="U_PWD" style="width:120px;" name="data[U_PWD]" value="{$seData.U_PWD|default=''}"></td>
+							<td><span class="inputYes">*</span>确认密码：</td>
+							<td><input type="password" id="U_PWD1" style="width:120px;" name="data[U_PWD1]" value="{$seData.U_PWD1|default=''}"></td>
+							</if>
+						</tr>
+						<tr>
+							<td><span class="inputYes">*</span>地址：</td>
+							
+							
+							<td colspan="5" align="left">
+								<table border="0" cellpacing="0" cellpadding="0">
+									<tr>
+										<td width="30%">
+											<select  size="1"   id="AR_L1" name="data[AR_L1]">
+												<option value="">--省市--</option>
+												<volist name="AR_L1" id="vo">
+												<option value="{$vo}" <if condition="$seData.AR_L1 eq $vo">selected</if>>{$vo}</option>
+												</volist>
+											</select>
+										</td>
+										<td width="30%">
+											<select size="1"   id="AR_L2" name="data[AR_L2]">
+												<option value="">--市辖区--</option>
+											</select>
+										</td>
+										<td width="30%">
+											<select size="1"  id="AR_L3" name="data[AR_L3]">
+												<option value="">--区县--</option>
+											</select>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="inputYes">*</span>详细地址：</td>
+							<td colspan="2"><input type=text id="O_ADDRESS" name="data[O_ADDRESS]" value="{$seData.O_ADDRESS|default=''}" style="width:200px;"></td>
+							
+							<td align="right">要求服务时间：</td>
+							<td colspan="2">
+							<input onclick1="WdatePicker({el:'O_REQ_TIME',dateFmt:'yyyy-MM-dd HH:mm'})" type="text" id="O_REQ_TIME" name="data[O_REQ_TIME]" value="{$seData.O_REQ_TIME|default=''}" readonly>
+							<img onclick="WdatePicker({el:'O_REQ_TIME',dateFmt:'yyyy-MM-dd HH:mm'})" src="__JS__/wdatepicker/skin/datePicker.gif" width="16" height="22" align="absmiddle">
+							</td>
+						</tr>
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
+				<th widht="5"></th>
+				<th colspan="2" align="left">商品信息</th>
+			</tr>
+			<tr>
+				<td width="5"></td>
+				<td width="15"><div class="contentline1"></div></td>
+				<td>
+				   <div style="margin-left:20px;">
+					<table border=0 cellspacing=0 cellpadding=0 width="100%">
+						<tr>
+							<td><span class="inputYes">*</span>选择产品：</td>
+							<td colspan="5">
+								<table border="0" cellpacing="0" cellpadding="0">
+									<tr>
+										<td >
+											<select size="1"   id="P_BRAND" name="data[P_BRAND]">
+												<option value="">--品牌--</option>
+												<volist name="BRAND" id="vo">
+												<option value="{$vo}" <if condition="$seData.P_BRAND eq $vo">selected</if>>{$vo}</option>
+												</volist>
+											</select>
+										</td>
+										<td >
+											<select size="1"   id="P_CATEGORY" name="data[P_CATEGORY]">
+												<option value="">--产品类型--</option>
+											</select>
+										</td>
+										<td >
+											<select size="1"  id="P_MODEL" name="data[P_MODEL]">
+												<option value="">--产品型号--</option>
+											</select>
+										</td>
+										<td >
+											<table border="0" cellspacing="0" cellpadding="0">
+												<tr>
+													<td>&nbsp;&nbsp;数量：</td>
+													<td>
+													<select size="1"  id="P_COUNT" name="data[P_COUNT]" style="width:50px;">
+													    <for start="1" end="20">
+														<option value="{$i}" <if condition="$seData.P_COUNT eq $i">selected</if>>{$i}</option>
+														</for>
+													</select>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+							
+						</tr>
+						<tr>
+							<td><span class="inputYes">*</span>购买渠道：</td>
+							<td colspan="5">
+								<table border="0" cellpacing="0" cellpadding="0">
+									<tr>
+										<td>
+											<select size="1"   id="P_CHANNEL_ID" name="data[P_CHANNEL_ID]">
+												<option value="">--选择渠道--</option>
+												<volist name="channel" id="vo">
+												<assign name="channelSelect" value="$vo.id" />
+												<option value="{$vo.id}" <if condition="$seData.P_CHANNEL_ID eq $channelSelect">selected</if>>{$vo.name}</option>
+												</volist>
+											</select>
+										</td>
+										<td>
+										<input type="text" id="P_CHANNEL" name="data[P_CHANNEL]" value="{$seData.P_CHANNEL|default=''}" style="width:180px">
+										</td>
+									</tr>
+								</table>
+							</td>
+							
+						</tr>
+						<tr>
+							<td ><span class="inputYes">*</span>购买时间：</td>
+							<td colspan="5">
+							<table border="0" cellpacing="0" cellpadding="0">
+									<tr>
+										<td>
+											<input onclick="WdatePicker({el:'P_BUY_TIME'})" type="text" id="P_BUY_TIME" name="data[P_BUY_TIME]" value="{$seData.P_BUY_TIME|default=''}" readonly>
+											<img onclick="WdatePicker({el:'P_BUY_TIME'})" src="__JS__/wdatepicker/skin/datePicker.gif" width="16" height="22" align="absmiddle">
+										</td>
+										<td>&nbsp;&nbsp;订单号：</td>
+										<td>
+										<input type="text" id="SO_ID" name="data[SO_ID]" value="{$seData.SO_ID|default=''}">
+										</td>
+									</tr>
+								</table>	
+							</td>
+						</tr>
+						
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+			
+			<tr>
+				<th widht="5"></th>
+				<th colspan="2" align="left">添加备注</th>
+			</tr>
+			<tr>
+				<td width="5"></td>
+				<td width="15"><div class="contentline2"></div></td>
+				<td>
+				<div style="margin-left:20px;">
+					<table border=0 cellspacing=0 cellpadding=0 width="100%">
+						<tr>
+							<td>
+							<textarea rows=3 cols=60 id="O_MEMO" name="data[O_MEMO]">{$seData.O_MEMO|default=''}</textarea>
+							</td>
+							<td>
+							<div style="display:none"><input type="submit" id="sumit" name="sumit" ></div>
+							<input type="hidden" name="data[orderNO]" id="orderNO" value="{$orderNO}">
+							<input type="hidden" name="data[O_TYPE]" id="ordertype" value="{$ordertype}">
+							<img src="__PUBLIC__/images/home/baoxiu-button.png" id="submitImage" style="cursor:pointer"/>
+							</td>
+							
+						</tr>
+						
+						
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	
+	
+	</form>
+	
+</div>
+</div>
+<if condition="$seData.AR_L1 neq ''">
+	<literal>
+	<script>
+		$("#AR_L2").empty();
+		$("#AR_L2").append('<option value="">--市辖区--</option>');
+		setArea('AR_L1',$("#AR_L1").val(),'AR_L2','{$seData.AR_L2}');
+		
+		$('#AR_L3').empty();
+		$('#AR_L3').append('<option value="">--区县--</option>');
+		setArea('AR_L1|AR_L2',"{$seData.AR_L1}|{$seData.AR_L2}",'AR_L3','{$seData.AR_L3}');
+	</script>
+	</literal>
+</if>
+<if condition="$seData.P_BRAND neq ''">
+<literal>
+	<script>
+		$("#P_CATEGORY").empty();
+		$("#P_CATEGORY").append('<option value="">--产品类型--</option>');
+		setProduct('P_BRAND','{$seData.P_BRAND}','P_CATEGORY','{$seData.P_CATEGORY}');
+		
+		$('#P_MODEL').empty();
+		$('#P_MODEL').append('<option value="">--产品型号--</option>');
+		setProduct('P_BRAND|P_CATEGORY',"{$seData.P_BRAND}|{$seData.P_CATEGORY}",'P_MODEL','{$seData.P_MODEL}');
+	</script>
+</literal>
+</if>

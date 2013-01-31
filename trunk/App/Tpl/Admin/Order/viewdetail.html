@@ -1,0 +1,336 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+
+<script>
+$(document).ready(function(){
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		}
+	});
+	$("#zhipai").bind("click",function(){
+		//todo:
+		var url="?g=Admin&m=Team&a=dslist&o_id={$data.O_ID}";
+		openDialog(url);
+	});
+	
+	//完成 
+	$("#finish").bind('click',function(){
+		savedata(40);
+	});
+	//确认完成 
+	$("#okfinish").bind('click',function(){
+		savedata(50);
+	});
+	//中断 
+	$("#break").bind('click',function(){
+		savedata(60);
+	});
+	//确认中断 
+	$("#okbreak").bind('click',function(){
+		//savedata(70);
+		stateDialog(70);
+	});
+	//违规 
+	$("#weigui").bind('click',function(){
+		//savedata(80);
+		stateDialog(80);
+	});
+});
+function stateDialog(state){
+	if(state==70){
+		var str_title="确认中断";
+	}else{
+		var str_title="确认违规";
+	}
+	var url="?g=Admin&m=Order&a=statey&o_id={$data.O_ID}&state="+state;
+	pDialog(str_title,url,500,260);
+}
+function savedata(state){
+	if(window.confirm("确认操作？")){
+		var url="o_id={$data.O_ID}&state="+state;
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Admin&m=Order&a=saveState",
+			   data: url,
+			   dataType:'text',
+			   success: function(msg){
+				 if(msg=="y"){
+					 alert('操作成功');
+					 
+				 }else{
+					 alert('操作失败');
+				 }
+			   }
+		});
+	}
+}
+function openDialog(url){
+	pDialog('服务队信息',url,600,450);
+}
+function dialogClose(){
+	pclose();
+}
+function showImage(id){
+	//var url="?g=Home&m=Order&a=showImage&o_id="+id;
+	//pDialog('安装卡',url,600,500);
+	parent.setLightBox(id);
+}
+function userTip(sob,ct){
+	 // 阴影+圆角
+     $("#"+sob).qtip({
+       position: {
+         my: 'bottom left',
+         at: 'top center'
+       },
+       style: {
+         classes: 'ui-tooltip-blue ui-tooltip-shadow ui-tooltip-rounded'
+       },
+       show: {
+			event: false, // Don't specify a show event...
+			ready: true // ... but show the tooltip when ready
+		},
+       content: ct
+     });
+}
+</script>
+<style>
+a {color:#FFFFFF}
+.cFieldset{margin-top:5px;}
+</style>
+</head>
+<body class="main" style="margin-top:1px;padding-top:1px;">
+<div class="wraper" style="width:780px;">
+	<form action="" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >服务单详情</legend>
+    		
+    			<fieldset class="cFieldset">
+	    			
+	    			<table width="100%" >
+		                <tr>
+		                    <th style="" width="15%">服务类型</label></th>
+		                    <td style="" width="85%">
+		                    	{$data.O_TYPE|default='无'}
+		                    	
+		                    	
+		                    	<span style="padding-left:80px">
+		                    		<span style="font-weight:bold;">安装方式</span>
+		                    		<span style="padding-left:10px">{$data.O_S_TYPE|getDictValueByKey='INSTALL_MODE',###|default='无'}</span>
+		                    	</span>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >产品信息</label></th>
+		                    <td style="">
+		                    	{$data.O_PRODUCT|default='无'}，数量 {$data.P_COUNT|default='无'}，{$data.P_BUY_TIME} 购于 {$data.P_CHANNEL|default='无'}，订单号 {$data.SO_ID|default='无'}<br />
+		                    	条形码 {$data.P_BAR_CODE|default='无'}，安装卡 
+		                    	<if condition="$data.P_INSTALL_CARD neq ''">
+		                    	<!--  <span id="portfolio"><a href="{$data.P_INSTALL_CARD}" onclick1="showImage('{$data.O_ID}');return false;">查看大图</a></span>-->
+		                    	<a href="#" onclick="showImage('{$data.O_ID}');return false;">查看大图</a>
+		                    	<else />
+		                    	无
+		                    	</if>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >服务地址</label></th>
+		                    <td style="">
+		                    	{$data.CU_NAME|default='无'}，{$data.O_MOBILE|default='无'}
+		                    	<if condition="$data.O_PHONE neq ''">，{$data.O_PHONE|default='无'}</if>，{$data.O_AREA|default='无'}
+		                    	<if condition="$data.O_POSTCODE neq ''">，{$data.O_POSTCODE|default='无'}</if>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >备注说明</label></th>
+		                    <td style="">
+		                    	{$data.O_MEMO|default='无'}
+		                    </td>
+		                </tr>
+	            	</table>
+            	</fieldset>
+            	
+            	<fieldset class="cFieldset">
+            		<table width="100%" >
+		                <tr>
+		                    <th style="" width="15%">客户信息</th>
+		                    <td style="" width="85%">
+		                   		 会员：{$data.CU_ID_Name|default='无'}，客户名：{$data.CU_NAME|default='无'}
+		                    	
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+            	<fieldset class="cFieldset">
+	    			
+	    			<table width="100%">
+		                <tr>
+		                    <th style="" width="15%">服务队信息</th>
+		                    <td style="" width="85%">
+		                    服务队：{$data.ST_NAME|default='无'}，服务人员：{$data.SRV_NAME|default='无'}
+		                    	
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+            	<fieldset class="cFieldset">
+	    			
+	    			<table width="100%">
+		                <tr>
+		                    <th style="" width="15%">处理信息</th>
+		                    <td style="" width="85%">
+		                    	<table width="100%">
+		                    		<tr>
+		                    			 	<td width="15%">服务单编号：</td>
+						                    <td width="20%">
+						                    	{$data.O_NO|default='无'}
+						                    </td>
+						                    <td width="10%">提交时间：</td>
+						                    <td width="20%">
+						                    	{$data.CREATED_AT|DateFormat="Y-m-d H:i",###}
+						                    </td>
+						                    <td width="10%">状态：</td>
+						                    <td width="20%">
+						                    	{$data.O_STATE_NAME|default='无'}
+						                    </td>
+		                    		</tr>
+		                    		<tr>
+		                    			 	<td >要求时间：</td>
+						                    <td >
+						                    	{$data.O_REQ_TIME|default='无'}
+						                    </td>
+						                    <td >服务时间：</td>
+						                    <td >
+						                    	{$data.O_SRV_TIME|default='无'}
+						                    </td>
+						                    <td >结算状态：</td>
+						                    <td >
+						                    	{$data.O_F_STATE|default='无'}
+						                    </td>
+		                    		</tr>
+		                    		<tr>
+		                    			<td>预约时间：</td>
+		                    			<td colspan="5">
+		                    			{$data.O_SRV_APPOINT_TIME|DateFormat="Y-m-d H:i",###|default='无'}
+		                    			</td>
+		                    				
+		                    		</tr>
+		                    	
+		                    	
+		                    	</table>
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+	    			<table width="100%" align="center">
+		                <tr>
+		                    <td align="center" style="text-align:center">
+		                    	<if condition="$ostatie elt 10" >
+		                    	<input type="button" id="zhipai"  value="指派服务队" />
+		                    	</if>
+		                    	<!--  <input type="button" id="finish" value="完成" />-->
+		                    	<if condition="$data.O_STATE eq 40">
+		                    	<input type="button" id="okfinish" value="确认完成" />
+		                    	</if>
+								<if condition="$data.O_STATE eq 60">
+		                    	<input type="button" id="okbreak" value="确认中断" />
+		                    	<input type="button" id="weigui" value="确认违规" />
+		                    	</if>
+								<!--<input type="button" id="break" value="中断" />-->
+								
+								
+		                    	
+		                    </td>
+		                </tr>
+	            	</table>
+		</fieldset>
+	</form>
+	
+	<script>
+	function extend(){
+		if($("#isExtend").val()=="y"){
+			$("#logTable").css("display","none");
+			$("#isExtend").val('n');
+			
+				$("#zhangkai").html('&nbsp;&nbsp;<img  src="__PUBLIC__/images/table/group-expand.gif" />')
+			
+		}else{
+			$("#logTable").css("display","");
+			$("#isExtend").val('y');
+			
+				$("#zhangkai").html('&nbsp;&nbsp;<img  src="__PUBLIC__/images/table/group-collapse.gif" />')
+			
+		}
+		
+	}
+	function addlog(o_id,o_no){
+		var url="?g=Admin&m=Main&a=addlog&o_id="+o_id+"&o_no="+o_no;
+		pDialog('日志',url,480,300);
+	}
+	</script>
+	<style>
+
+	#logTable th,td div{padding:3px 5px;}
+	</style>
+	<fieldset>
+    		<legend style="cursor:pointer" onclick="extend();">处理日志<span id="zhangkai" >&nbsp;&nbsp;<img  src="__PUBLIC__/images/table/group-expand.gif" /></span></legend>
+    			<br />
+    			<table id="logTable" style="display:none;border-collapse:separate;border-spacing:1px;" align="center" width="95%"  border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce">
+			      <tr>
+			      	<td align="right" colspan="5" bgcolor="#FFFFFF"><a href="#" onclick="addlog('{$data.O_ID}','{$data.O_NO}');return false;">[添加日志]</a></td>
+			      </tr>
+			      <tr>
+			        
+			        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">用户</span></div></th>
+			        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">角色</span></div></th>
+			        <th width="12%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">IP</span></div></th>
+			        <th width="48%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">日志内容</span></div></th>
+			        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">时间</span></div></th>
+			       
+			      </tr>
+	    			<volist name="logs" id="vo">
+	    				<tr>      
+	    					<td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$vo.U_NAME}</span></div></td>
+					        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$vo.R_NAME}</span></div></td>
+					        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$vo.LG_IP}</div></td>
+					        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$vo.LG_CONTENT}</div></td>
+					        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$vo.CREATED_AT|date='Y-m-d H:i',###}</div>
+					        <input type="hidden" id="isExtend" value="n"></input>
+					        </td>
+				      	</tr>
+	    			</volist>
+	    			</table>
+    		
+    </fieldset>
+</div>
+</body>
+<if condition="$ostatie elt 10" >
+
+<script>
+$(document).ready(function(){
+//userTip('zhipai','还没有服务队，请手动指派');
+});
+</script>
+</if>

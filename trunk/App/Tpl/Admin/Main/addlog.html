@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/jquery.form.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script>
+$(document).ready(function(){
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		}
+	});
+	$('#roleForm').submit(function(){
+		$(this).ajaxSubmit(options); 
+		return false;
+	});
+	//$('#roleForm').ajaxSubmit(options); 
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	
+});
+
+function showRequest(formData, jqForm, options) { 
+	if($("#content").val()==""){
+		$("#msg").html("<font color='red'> 请输入内容</font>");
+		return false;
+	}
+	return true;
+	
+}
+function showResponse(rs, statusText, xhr, $form)  { 
+	if(rs=='y'){
+		//pAlertN('提示','用户添加成功');
+		alert('日志添加成功');
+		
+		parent.window.location.reload();
+	}else{
+	
+		alert('操作失败');
+	}
+}
+
+</script>
+<style>
+a {color:#FFFFFF}
+</style>
+</head>
+<body style="background-color:#FFFFFF">
+<div style="width:480px;margin:0 auto;padding-top:10px;">
+	<form action="" method="post" class="registerform" id="roleForm" >
+		<fieldset>
+    		<legend >添加日志</legend>
+	    			<table width="100%">
+		               
+		                 <tr>
+		                    <td style="text-align:center">
+		                    	<textarea style="width:350px;height:150px;" rows="10" cols="50" id="content" name="content"></textarea>
+		                    </td>
+		                </tr>
+		                
+		                <tr>
+		                	<td align="center"  style="text-align:center">
+		                		<input type="submit" id="submit" value="保存"></input>
+		                		<span id="msg"></span>
+		                		<input type="hidden" name="o_id" value="{$o_id}"></input>
+		                		<input type="hidden" name="o_no" value="{$o_no}"></input>
+		                		<input type="hidden" name="op" value="1"></input>
+		                		
+		                	</td>
+		                </tr>
+	            	</table>
+            	</fieldset>
+	</form>
+</div>
+</body>

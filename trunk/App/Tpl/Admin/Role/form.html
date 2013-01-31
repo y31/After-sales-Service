@@ -1,0 +1,102 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+			},
+			usePlugin:{
+				jqtransform:{}
+			},
+			ajaxPost:true,
+			callback:function(data){
+				alert(data.info);
+				if(data.status=="y"){
+					parent.window.location.reload();
+					/*setTimeout(function(){
+						$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+					},2000);
+					*/
+				}
+			}
+			
+		});
+		
+	});
+</script>
+<style>
+body{background-color:#FFFFFF}
+</style>
+</head>
+<body >
+<div>
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >角色管理</legend>
+    		
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">角色名称</label>：</td>
+                    <td style="width:205px;">
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="R_NAME" value="{$uData.R_NAME}" name="data[R_NAME]" class="inputxt" datatype="*"  /></td>
+                    <else />
+                    	<input type="text" id="R_NAME" value="{$uData.R_NAME}" name="data[R_NAME]" class="inputxt" datatype="*" ajaxurl="?g=Admin&m=Role&a=checkrole" /></td>
+                    </if>
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+               
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">角色简称</label>：</td>
+                    <td style="width:205px;">
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="R_SHORT_NAME" name="data[R_SHORT_NAME]" value="{$uData.R_SHORT_NAME}" class="inputxt" datatype="*"/></td>
+                    <else />
+                    	<input type="text" id="R_SHORT_NAME" name="data[R_SHORT_NAME]" value="{$uData.R_SHORT_NAME}" class="inputxt" datatype="*" ajaxurl="?g=Admin&m=Role&a=checkrole" /></td>
+                    </if>
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                
+                <tr>
+                    <td class="need"></td>
+                    <td>角色首页：</td>
+                    <td><input type="text" id="R_HOME_URL" name="data[R_HOME_URL]" value="{$uData.R_HOME_URL}" class="inputxt"   /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"></td>
+                    <td>角色备注：</td>
+                    <td>
+                    <textarea rows="5" cols="50" id="R_MEMO" name="data[R_MEMO]"></textarea>
+                    </td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+            </table>
+		</fieldset>
+		
+    	<fieldset class="action">
+    	<input type="hidden" name="data[R_ID]" value="{$uData.R_ID}">
+    	<input type="hidden" name="R_ID" value="{$R_ID}">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>

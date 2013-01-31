@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><PHP>echo getSysTitle();</PHP></title>
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<script src="__JS__/wdatepicker/WdatePicker.js" type="text/javascript" ></script>
+<style type="text/css">
+body{background-color:#FFF}
+.inputYes{color:#FF0000}
+</style>
+<script>
+$(document).ready(function(){
+	//屏蔽退格键 使整个页面后退
+	$(document).keydown(function (e) {  
+        var doPrevent; 
+        if (e.keyCode == 8) {  
+            var d = e.srcElement || e.target;  
+            if (d.tagName.toUpperCase() == 'INPUT' || d.tagName.toUpperCase() == 'TEXTAREA') {  
+                doPrevent = d.readOnly || d.disabled;  
+           }  
+            else  
+                doPrevent = true;  
+        }  
+        else  
+            doPrevent = false;  
+        if (doPrevent){  
+            e.preventDefault();  
+        }else{
+        	e.keyCode=0;
+        	e.returnValue=false;
+        }
+    });  
+
+});
+function showAlert(type,id){
+	if(type=="y"){
+		type='1'; 
+		 info="确认完成成功";
+		 url="?g=Home&m=Order&a=detail&O_ID="+id;
+	}else{
+		type='2'; 
+		 info="确认完成失败";
+		 url="?g=Home&m=Order&a=detail&O_ID="+id;
+	}
+	 parent.window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+}
+</script>
+<style>
+#yytime table td{line-height:30px;}
+</style>
+</head>
+<body>
+<div  style="padding-top:15px;">
+<form action="?g=Home&m=Order&a=yytime" method="post" id="roleForm" class="registerform" >
+<fieldset>
+	<table border="0" cellspacing="0" cellpadding="0" id="yytime">
+		
+		<tr>
+            <td  width="20%" style="line-height:40px;"><span>预约上门时间：</span></td>
+            <td style="" width="40%">
+	            <table border="0" cellspacing="0" cellpadding="0">
+	            <tr>
+	            <td><input datatype="*"  type="text" id="O_SRV_APPOINT_TIME" name="O_SRV_APPOINT_TIME" value="{$O_SRV_APPOINT_TIME|DateFormat='Y-m-d H:i',###|default=''}" readonly></td>
+	            <td><img onclick="WdatePicker({el:'O_SRV_APPOINT_TIME',dateFmt:'yyyy-MM-dd HH:mm'})" src="__JS__/wdatepicker/skin/datePicker.gif" width="20" height="30" align="absmiddle"></td>
+	            </tr>
+	            </table>
+           </td>
+           <td width="40%"><div class="Validform_checktip" style="line-height:40px;height:40px;">请选时间</div></td>
+		</tr>
+		
+		<tr>
+			<td colspan="3" style="">
+					<input type="hidden" name="o_id" value="{$o_id}">
+					<input type="hidden" name="op" value="1">
+    				<input style="" type="submit" value="确认提交" />
+			</td>
+		</tr>
+	</table>
+</fieldset>
+</form>
+</div>
+</body>
+<script>
+$(document).ready(function(){
+	
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		},
+		usePlugin:{
+			jqtransform:{}
+		},
+		ajaxPost:true,
+		callback:function(data){
+			var bz=data.status;
+			var info=data.info;
+			var oid=data.oid;
+			url="?g=Home&m=Order&a=detail&O_ID="+oid;
+			if(bz=="y"){
+				type='1';
+			}else{
+				type='2'; 
+			}
+			 parent.window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+		}
+	});
+	
+	
+});
+
+</script>
+</html>

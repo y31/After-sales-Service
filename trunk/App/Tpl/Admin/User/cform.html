@@ -1,0 +1,260 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+
+
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+
+			},
+			usePlugin:{
+				//jqtransform:{}
+			},
+			ajaxPost:true,
+			callback:function(data){
+				alert(data.info);
+				if(data.status=="y"){
+					parent.window.location.reload();
+					/*setTimeout(function(){
+						$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+					},2000);
+					*/
+				}
+			}
+		});
+		//得到地区
+		$("#AR_L1").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$("#AR_L2").empty();
+			$("#AR_L2").append('<option value="">--市辖区--</option>');
+			getArea('AR_L1',$(this).val(),'AR_L2');
+		});
+		$("#AR_L2").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$('#AR_L3').empty();
+			$('#AR_L3').append('<option value="">--区县--</option>');
+			getArea('AR_L1|AR_L2',$("#AR_L1").val()+"|"+$(this).val(),'AR_L3');
+		});
+		
+	});
+	
+	function getArea(stName,st,fl){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=getArea",
+			   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+			   dataType:'json',
+			   success: function(msg){
+				 if(msg.sucess=='y'){
+					var f=msg.fl;
+					var data=msg.data;
+					var _html=[];
+					var k;
+					for (k in data){
+						_html.push('<option value="'+data[k]+'">'+data[k]+'</option>');
+					}
+					
+					$("#"+f).append(_html.join(''));
+					
+					for (k in data){
+						_html.push('<li><a href="javascript:;">'+data[k]+'</a></li>');
+					}
+					$("#"+f+"_1").append(_html.join(''));
+				 }
+			     
+			   }
+		});
+	}
+
+	function setArea(stName,st,fl,v){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=getArea",
+			   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+			   dataType:'json',
+			   success: function(msg){
+				 if(msg.sucess=='y'){
+					var f=msg.fl;
+					var data=msg.data;
+					var _html=[];
+					var k;
+					for (k in data){
+						var _sel='';
+						if(v==data[k]){
+							_sel="selected";
+						}
+						_html.push('<option value="'+data[k]+'"  '+_sel+'>'+data[k]+'</option>');
+					}
+					
+					$("#"+f).append(_html.join(''));
+				 }
+			     
+			   }
+		});
+	}
+</script>
+<style>
+body{background-color:#ffffff}
+</style>
+</head>
+ 
+
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >用户管理</legend>
+    		
+    		<table width="100%">
+    			 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">会员名</label>：</td>
+                    <td style="">
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_NAME" value="{$uData.U_NAME}" name="data[U_NAME]" class="inputxt" datatype="*"  />
+                    <else />
+                    	<input type="text" id="U_NAME" value="{$uData.U_NAME}" name="data[U_NAME]" class="inputxt" datatype="*"   ajaxurl="?g=Admin&m=User&a=checkUInfo"/>
+                    </if>
+                    </td>
+                    <td><div class="Validform_checktip">请输入会员名</div></td>
+                </tr>
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">姓名</label>：</td>
+                    <td style="width:205px;"><input type="text" id="U_RNAME" name="data[U_RNAME]" value="{$uData.U_RNAME}" class="inputxt" datatype="*"  /></td>
+                    <td><div class="Validform_checktip">请输入姓名</div></td>
+                </tr>
+               <if condition="$edit neq 'y'">
+                 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">密码：</td>
+                    <td style="width:205px;"><input type="password" id="U_PWD" name="data[U_PWD]" class="inputxt" datatype="*6-16" nullmsg="请设置密码！" errormsg="密码范围在6~16位之间！" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:205px;">确认密码：</td>
+                    <td><input type="password" id="U_PWD1" name="data[U_PWD1]" class="inputxt" datatype="*" recheck="data[U_PWD]" nullmsg="请再输入一次密码！" errormsg="您两次输入的账号密码不一致！" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                </if>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td>手机：</td>
+                    <td>
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_MOBILE" name="data[U_MOBILE]" value="{$uData.U_MOBILE}" class="inputxt" datatype="m" errormsg="请输入您的手机号码！" />
+                    <else />
+                    	<input type="text" id="U_MOBILE" name="data[U_MOBILE]" value="{$uData.U_MOBILE}" class="inputxt" datatype="m" errormsg="请输入您的手机号码！"  ajaxurl="?g=Admin&m=User&a=checkUInfo" />
+                    </if>
+                    
+                    </td>
+                    <td><div class="Validform_checktip">请输入手机</div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td>邮箱：</td>
+                    <td>
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="U_EMAIL" name="data[U_EMAIL]" value="{$uData.U_EMAIL}" class="inputxt" datatype="e" errormsg="请输入您的邮箱！"  /></td>
+                    <else />
+                    	<input type="text" id="U_EMAIL" name="data[U_EMAIL]" value="{$uData.U_EMAIL}" class="inputxt" datatype="e" errormsg="请输入您的邮箱！"   ajaxurl="?g=Admin&m=User&a=checkUInfo"/></td>
+                    </if>
+                    
+                    
+                    <td><div class="Validform_checktip">请输入邮箱</div></td>
+                </tr>
+                
+                 <tr>
+                    <td class="need"></td>
+                    <td>固定电话：</td>
+                    <td><input type="text" id="U_PHONE" name="data[U_PHONE]" value="{$uData.U_PHONE}" class="inputxt"  /></td>
+                    <td><div class="Validform_checktip">请输入固定电话</div></td>
+                </tr>
+                
+            </table>
+		</fieldset>
+		<fieldset>
+    		<legend>选择地区</legend>
+    		
+	    		<table>
+		    		 <tr>
+		                  <td class="need" style="width:0px;"></td>
+		                  <td style="width:80px;line-height:30px;"><span class="inputYes">*</span>地址</td>
+		                  <td style="width:;">
+		                  <table border="0" cellpacing="0" cellpadding="0">
+							<tr>
+								<td width="30%">
+									<select size=1 id="AR_L1" name="data[AR_L1]" datatype="*" style="width:100px">
+										<option value="">--省市--</option>
+										<volist name="AR_L1" id="vo">
+										<option value="{$vo}" <if condition="$userInfo.AR_L1 eq $vo">selected</if>>{$vo}</option>
+										</volist>
+									</select>
+								</td>
+							
+								<td width="30%">
+									<select size=1  datatype="*"  id="AR_L2" name="data[AR_L2]" style="width:100px">
+										<option value="">--市辖区--</option>
+									</select>
+								</td>
+								<td width="30%" colspan="2">
+									<select size=1 datatype="*" id="AR_L3" name="data[AR_L3]" style="width:100px;">
+										<option value="">--区县--</option>
+									</select>
+								</td>
+								</tr>
+								
+						</table>
+		                  </td>
+		                  <td><div class="Validform_checktip" id="Validform_checktip_AR_L" style="line-height:30px;">请输入地址</div></td>
+		              </tr>
+		               <tr>
+		                  <td class="need" style="width:0px;"></td>
+		                  <td style="width:80px;line-height:30px;">详细地址</td>
+		                  <td style="width:;">
+		                   <input type=text id="U_ADDRESS" name="data[U_ADDRESS]" value="{$userInfo.U_ADDRESS|default=''}" class="inputxt"  style="width:230px;">
+		                  </td>
+		                  <td><div class="Validform_checktip" id="Validform_checktip_O_ADDRESS" style="line-height:30px;">请输入详细地址</div></td>
+		              </tr>
+	    		</table>
+    	</fieldset>
+    	<fieldset class="action">
+    	<input type="hidden" name="data[U_ID]" value="{$uData.U_ID}">
+    	<input type="hidden" name="uid" value="{$uid}">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+<if condition="$userInfo.AR_L1 neq ''">
+	<literal>
+	<script>
+		$("#AR_L2").empty();
+		$("#AR_L2").append('<option value="">--市辖区--</option>');
+		setArea('AR_L1','{$userInfo.AR_L1}','AR_L2','{$userInfo.AR_L2}');
+		
+		$('#AR_L3').empty();
+		$('#AR_L3').append('<option value="">--区县--</option>');
+		setArea('AR_L1|AR_L2',"{$userInfo.AR_L1}|{$userInfo.AR_L2}",'AR_L3','{$userInfo.AR_L3}');
+	</script>
+	</literal>
+</if>
+</body>

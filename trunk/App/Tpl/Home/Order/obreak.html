@@ -1,0 +1,126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><PHP>echo getSysTitle();</PHP></title>
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/jquery.form.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+<style type="text/css">
+body{background-color:#FFF}
+.inputYes{color:#FF0000}
+</style>
+<script>
+function showAlert(type,id){
+	if(type=="y"){
+		type='1'; 
+		 info="确认完成成功";
+		 url="?g=Home&m=Order&a=detail&O_ID="+id;
+	}else{
+		type='2'; 
+		 info="确认完成失败";
+		 url="?g=Home&m=Order&a=detail&O_ID="+id;
+	}
+	 parent.window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+}
+</script>
+</head>
+<body>
+<div  style="padding-top:15px;">
+<form action="" method="post" id="roleForm" class="registerform"   >
+<fieldset>
+	<table border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			
+            <td style=""><span class="inputYes">*</span>中断原因：</td>
+            <td style="" align="left">
+            <div>
+             <volist name="BRAK_TYPE" id="vo">
+             <input class="rt2"  datatype="*" type="checkbox" name="data[P_BREAK_TYPE][]"  value="{$vo}">{$vo}
+             </volist>
+             </div>
+             </td>
+            <td><div class="Validform_checktip" id="azk_show"></div></td>
+		</tr>
+		
+		<tr>
+			
+           
+            <td style="">备注</td>
+            <td style=""><textarea style="width:300px;" rows="3" cols="60" id="O_ST_MEMO" name="data[O_ST_MEMO]"></textarea></td>
+            <td><div class="Validform_checktip">其他说明(200字以内)</div></td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align:center">
+					<input type="hidden" name="o_id" value="{$o_id}">
+					<input type="hidden" name="op" value="1">
+    				<input style="width:60px;height:30px;text-align:center;padding:2px 4px;" type="submit" value="确认中断" />
+			</td>
+		</tr>
+	</table>
+</fieldset>
+</form>
+</div>
+</body>
+<script>
+$(document).ready(function(){
+	
+	$(".registerform").Validform({
+		
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		},
+		usePlugin:{
+			jqtransform:{}
+		}
+	});
+	
+	$('#roleForm').submit(function(){
+		$(this).ajaxSubmit(options); 
+		return false;
+	});
+	//$('#roleForm').ajaxSubmit(options); 
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+});
+function showRequest(formData, jqForm, options) { 
+	//判断是否选择了中断原因
+	var ischek='n';
+	$("input[name^='data[P_BREAK_TYPE]']").each(function(){
+		
+		if($(this).attr("checked")){
+			ischek='y';
+		}
+	});
+	if(ischek=='n'){
+		return false;
+	}
+	return true;
+	
+}
+function showResponse(rs, statusText, xhr, $form)  { 
+	var __rev=rs.split("|");
+	if(__rev[0]=="y"){
+		type='1'; 
+		 info="中断成功";
+		 url="?g=Home&m=Order&a=detail&O_ID="+__rev[1];
+	}else{
+		type='2'; 
+		 info="中断失败";
+		 url="?g=Home&m=Order&a=detail&O_ID="+__rev[1];
+	}
+	 parent.window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+}
+</script>
+</html>

@@ -1,0 +1,104 @@
+<include file="Public:html:inHeader" />
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+$(document).ready(function(){
+
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+		},
+		usePlugin:{
+			jqtransform:{}
+		},
+		ajaxPost:true,
+		callback:function(data){
+			alert(data.info);
+			if(data.status=="y"){
+				parent.window.location.reload();
+				/*setTimeout(function(){
+					$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+				},2000);
+				*/
+			}
+		}
+		
+	});
+	$("a[name='del[]']").click(function(){
+		var __count=0;
+		$("table").each(function(){
+			__count++;
+		});
+		//留下一个
+		if(__count>1){
+			$(this).parents('table').remove();
+		}
+		
+		return false;
+	});
+	
+});
+
+function add(){
+	$("table:eq(0)").clone(true).prependTo("#product"); 
+}
+
+
+</script>
+<style>
+body{background-color:#ffffff}
+</style>
+</head>
+<body >
+<div >
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >渠道管理</legend>
+    		<div> <a href="#" onclick="add();return false;">[增加渠道]</a></div>
+    		<hr />
+    		<div id="product">
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">名称</label>：</td>
+                    <td style="width:205px;">
+                    <input type="text" id="C_NMAE" value="{$uData.C_NMAE}" name="C_NMAE[]" class="inputxt" datatype="*"  /></td>
+                   
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr style="display:">
+                	<td colspan="4">
+                	<div> <a href="#" name="del[]">[删除]</a></div>
+                	</td>
+                </tr>
+                <tr>
+                	<td colspan="4"><hr /></td>
+                </tr>
+            </table>
+            </div>
+		</fieldset>
+		
+    	<fieldset class="action">
+    	
+    	<input type="hidden" name="op" value="1">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>
+
+
+<include file="Public:html:inFooter" />

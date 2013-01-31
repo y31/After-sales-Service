@@ -1,0 +1,23 @@
+<include file="Public:html:inHeader" />
+<div class="mainbody">
+	<include file="Public:html:header" />
+	<div class="mainContent">
+	  <div class="hAction">
+			<!-- 控制Action -->
+			<include file="Public:html:hAction" />
+	  </div>
+	  <div id="homemenu">
+	  		<!-- 左边菜单 -->
+	  		<include file="Public:html:menu" menu="{$menu}" />
+	  </div>
+	  <div id="homecontent">
+	  		<!-- 右边主体 -->
+	  		<include file="Home:Index:flowform"/>
+	  </div>
+	</div>
+	<div class="mainContent1">
+		<include file="Public:html:links"/>
+	</div>
+	<include file="Public:html:footer" />
+</div>
+<include file="Public:html:inFooter" />

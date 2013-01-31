@@ -1,0 +1,105 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+			},
+			usePlugin:{
+				jqtransform:{}
+			},
+			ajaxPost:true,
+			callback:function(data){
+				alert(data.info);
+				if(data.status=="y"){
+					parent.window.location.reload();
+					/*setTimeout(function(){
+						$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+					},2000);
+					*/
+				}
+			}
+			
+		});
+		
+	});
+</script>
+<style>
+body{background-color:#FFFFFF}
+</style>
+</head>
+<body >
+<div>
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >权限管理</legend>
+    		
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">权限名称</label>：</td>
+                    <td style="width:205px;">
+                    <input type="text" id="P_NAME" value="{$uData.P_NAME}" name="data[P_NAME]" class="inputxt" datatype="*"  /></td>
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+               
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">权限代码</label>：</td>
+                    <td style="width:205px;">
+                    <if condition="$edit eq 'y'">
+                    	<input type="text" id="P_CODE" name="data[P_CODE]" value="{$uData.P_CODE}" class="inputxt" datatype="*"/></td>
+                    <else />
+                    	<input type="text" id="P_CODE" name="data[P_CODE]" value="{$uData.P_CODE}" class="inputxt" datatype="*"  /></td>
+                    </if>
+                    
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                
+                <tr>
+                    <td class="need"></td>
+                    <td>权限类型：</td>
+                    <td>
+                    <select name="data[P_TYPE]" id="P_TYPE" style="width:180px;">
+                    	<volist name="type" id="vo">
+                    		<assign name="typeid" value="$vo.id" />
+                    		<option value="{$vo.id}" <if condition="$uData.P_TYPE eq $typeid">selected</if>>{$vo.name}</option>
+                    	</volist>
+                    </select>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"></td>
+                    <td>权限备注：</td>
+                    <td>
+                    <textarea rows="5" cols="50" id="P_DESC" name="data[P_DESC]">{$uData.P_DESC}</textarea>
+                    </td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+            </table>
+		</fieldset>
+		
+    	<fieldset class="action">
+    	<input type="hidden" name="data[P_ID]" value="{$uData.P_ID}">
+    	<input type="hidden" name="P_ID" value="{$P_ID}">
+    	<input type="hidden" name="data[P_STATE]" value="1">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>

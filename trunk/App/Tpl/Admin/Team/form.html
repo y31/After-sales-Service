@@ -1,0 +1,488 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+
+			},
+			usePlugin:{
+				jqtransform:{}
+			}
+		});
+		
+		$('#roleForm').submit(function(){
+			$(this).ajaxSubmit(options); 
+			return false;
+		});
+		//$('#roleForm').ajaxSubmit(options); 
+		var options={
+				 beforeSubmit:  showRequest,  
+				 success:       showResponse  
+		};
+		
+		//得到地区
+		$("#AR_L1").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$("#AR_L2").empty();
+			$("#AR_L2").append('<option value="">--市辖区--</option>');
+			getArea('AR_L1',$(this).val(),'AR_L2');
+		});
+		$("#AR_L2").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$('#AR_L3').empty();
+			$('#AR_L3').append('<option value="">--区县--</option>');
+			getArea('AR_L1|AR_L2',$("#AR_L1").val()+"|"+$(this).val(),'AR_L3');
+		});
+		function getArea(stName,st,fl){
+			var url="stName="+stName+"&st="+encodeURI(st)+"&fl="+fl+'&rd='+Math.random();
+			$.ajax({
+				   type: "POST",
+				   url: "?g=Home&m=Index&a=getArea",
+				   data: url,
+				   dataType:'json',
+				   success: function(msg){
+					 if(msg.sucess=='y'){
+						var f=msg.fl;
+						var data=msg.data;
+						var _html=[];
+						var k;
+						for (k in data){
+							_html.push('<option value="'+data[k]+'">'+data[k]+'</option>');
+						}
+						
+						$("#"+f).append(_html.join(''));
+						
+					 }
+				     
+				   }
+			});
+		}
+		
+
+		//得到地区
+		$("#ARL1").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$("#ARL2").empty();
+			$("#ARL2").append('<option value="">--市辖区--</option>');
+			getArea1('AR_L1',$(this).val(),'AR_L2');
+		});
+		$("#ARL2").bind('change',function(){
+			if($(this).val()==''){
+				return false;
+			}
+			$('#ARL3').empty();
+			$('#ARL3').append('<option value="">--区县--</option>');
+			getArea1('AR_L1|AR_L2',$("#ARL1").val()+"|"+$(this).val(),'AR_L3');
+		});
+		function getArea1(stName,st,fl){
+			var url="stName="+stName+"&st="+encodeURI(st)+"&fl="+fl+'&rd='+Math.random();
+			$.ajax({
+				   type: "POST",
+				   url: "?g=Home&m=Index&a=getArea",
+				   data: url,
+				   dataType:'json',
+				   success: function(msg){
+					 if(msg.sucess=='y'){
+						var f=msg.fl;
+						var data=msg.data;
+						var _html=[];
+						var k;
+						for (k in data){
+							_html.push('<option value="'+data[k]+'">'+data[k]+'</option>');
+						}
+						if(f=='AR_L2'){
+							$("#ARL2").append(_html.join(''));
+						}else if(f=='AR_L3'){
+							$("#ARL3").append(_html.join(''));
+						}
+						
+						
+					 }
+				     
+				   }
+			});
+		}
+		
+		
+	});
+	function showRequest(formData, jqForm, options) { 
+		if($("#srv_area").val()==""){
+			$("#srvareaTitle").html("<font color='red'>请选择服务地区</font>");
+			return false;	
+		}
+		return true;
+		
+	}
+	function showResponse(rs, statusText, xhr, $form)  { 
+		if(rs=='y'){
+			//pAlertN('提示','用户添加成功');
+			alert('操作成功');
+			window.location.href="?g=Admin&m=Team&a=slist";
+			
+		}else{
+			//pAlertN('提示','用户添加失败');
+			alert('操作失败');
+		}
+	}
+	//提示信息
+	function userTip(sob,ct){
+		 // 阴影+圆角
+	      $("#"+sob).qtip({
+	        position: {
+	          my: 'bottom left',
+	          at: 'top center'
+	        },
+	        style: {
+	          classes: 'ui-tooltip-blue ui-tooltip-shadow ui-tooltip-rounded'
+	        },
+	        show: {
+				event: false, // Don't specify a show event...
+				ready: true // ... but show the tooltip when ready
+			},
+	        content: ct
+	      });
+	}
+	function setUser(){
+		var url="?g=Admin&m=User&a=slist&f1=RP_U_ID&f2=RP_U&role=3";
+		openDialog(url);
+	}
+	function openDialog(url){
+		pDialog('',url,500,380);
+	}
+	function dialogClose(){
+		pclose();
+	}
+	var count=1;
+	function addSrvArea(){
+		if($("#ARL1").val()=="" || $("#ARL2").val()=="" || $("#ARL3").val()=="" ){
+			$("#srvareaTitle").html("<font color='red'>省市,市辖区,区县必须全选</font>");
+			return false;
+		}else{
+			//检测是否存在
+			var _srv_area=$("#srv_area").val();
+			var _ar1=$("#ARL1").val();
+			var _ar2=$("#ARL2").val();
+			var _ar3=$("#ARL3").val();
+			var v=_ar1+","+_ar2+","+_ar3;
+			//检查选择的地区是否已经其他服务队使用
+			
+			$.ajax({
+			   type: "POST",
+			   url: "?g=Admin&m=Team&a=checkSrvTeam",
+			   data: "area="+encodeURI(v),
+			   success: function(msg){
+			     if(msg=='y'){
+			    	 $("#srvareaTitle").html("<font color='red'>选择的服务地区已经有服务队使用！</font>");
+			     }else{
+			    	 
+			    	 if(_srv_area==''){
+							$("#srv_area").val(v);
+							$("#arlist").append("<div id='divarea0'><span id='area0'>"+v+"</span>&nbsp;&nbsp;<img src='__PUBLIC__/images/table/ico_delete.gif' align='absmiddle' title='删除' onclick='delArea(\"area0\");'   class='areadel'/></div>");
+						}else{
+							var list=[];
+							var _l=_srv_area.split('|');
+							var isOk='n';
+							for(var i=0;i<_l.length;i++){
+								
+								if(_l[i]==v){
+									isOk='y';
+									break;
+								}
+							}
+							if(isOk=='n'){
+								_l.push(v);
+								list.push(v);
+							}
+							//alert(_l.join('|'));
+							$("#srv_area").val(_l.join('|'));
+							for(var i=0;i<list.length;i++){
+								$("#arlist").append("<div ><span id='area"+count+"'>"+list[i]+"</span>&nbsp;&nbsp;<img src='__PUBLIC__/images/table/ico_delete.gif' align='absmiddle' title='删除' onclick='delArea(\"area"+count+"\");'  class='areadel' /></div>");
+								count++;
+							}
+						}
+			    	 
+			    	 
+			     }
+			   }
+			});
+			
+			
+			
+		}
+		
+	}
+	function delArea(oid){
+		var _text=$("#"+oid).text();
+		var _srv_area=$("#srv_area").val();
+		var _l=_srv_area.split('|');
+		var list=[];
+		for(var i=0;i<_l.length;i++){
+			if(_l[i]==_text){
+				
+			}else{
+				list.push(_l[i]);
+			}
+		}
+		$("#srv_area").val(list.join('|'));
+		$("#"+oid).parent().remove();
+	}
+	
+	function setArea(stName,st,fl,v){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Index&a=getArea",
+			   data: "stName="+stName+"&st="+st+"&fl="+fl+'&rd'+Math.random(),
+			   dataType:'json',
+			   success: function(msg){
+				 if(msg.sucess=='y'){
+					var f=msg.fl;
+					var data=msg.data;
+					var _html=[];
+					var k;
+					for (k in data){
+						var _sel='';
+						if(v==data[k]){
+							_sel="selected";
+						}
+						_html.push('<option value="'+data[k]+'"  '+_sel+'>'+data[k]+'</option>');
+					}
+					
+					$("#"+f).append(_html.join(''));
+				 }
+			     
+			   }
+		});
+	}
+</script>
+<style>
+#roleForm input{width:300px;}
+#roleForm select{width:100px;height:22px;}
+#roleForm td{height:30px;}
+.spanButton{background-color:#D3EAEF;border:1px solid #ADD2DA;font-size:12px;cursor:pointer}
+.areadel{cursor:pointer};
+</style>
+</head>
+<body class="main">
+
+<div class="wraper">
+	<form action="" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >服务队信息</legend>
+    		
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">服务队名称</label>：</td>
+                    <td style="width:205px;"><input type="text" id="ST_NAME" value="{$uData.ST_NAME}" name="data[ST_NAME]" class="inputxt" datatype="*"  ajaxurl="?g=Admin&m=Team&a=checkteam"/></td>
+                    <td><div class="Validform_checktip">服务队名称，不可重复</div></td>
+                </tr>
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">负责人</label>：</td>
+                    <td style="width:205px;">
+                    <input style="width:275px;" type="text" id="RP_U" name="data[RP_U]"  value="{$uData.RP_U}" class="inputxt" datatype="*" />
+                    <input type="hidden" id="RP_U_ID" name="data[RP_U_ID]" value="{$uData.RP_U_ID}" class="inputxt"  />
+                    <span class="spanButton" id="sCr" onclick="setUser();" >&nbsp;选&nbsp;</span>
+                    </td>
+                    <td><div class="Validform_checktip">负责人，从用户中选择。该用户可登录系统接单</div></td>
+                </tr>
+                 <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">所在地区：</td>
+                    <td style="width:205px;">
+                    	<table>
+                    		<tr>
+                    			<td>
+                    				<select  id="AR_L1" name="data[AR_L1]" datatype="*" nullmsg="请选择所在省市！" errormsg="请选择所在省市！">
+										<option value="">--省市--</option>
+										<volist name="AR_L1" id="vo">
+										<option value="{$vo}" <if condition="$uData.AR_L1 eq $vo">selected</if>>{$vo}</option>
+										</volist>
+									</select>
+                    			</td>
+                    			<td>
+                    				<select  id="AR_L2" name="data[AR_L2]" datatype="*" nullmsg="请选择所在市辖区！" errormsg="请选择所在市辖区！">
+										<option value="">--市辖区--</option>
+									</select>
+                    			</td>
+                    			<td>
+                    				<select id="AR_L3" name="data[AR_L3]" datatype="*" nullmsg="请选择所在市区县！" errormsg="请选择所在市区县！">
+										<option value="">--区县--</option>
+									</select>
+                    			</td>
+                    		</tr>
+                    	</table>
+                    <td><div class="Validform_checktip" style="padding-top:5px;">服务队所在地区(不同于服务地区)</div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">地址：</td>
+                    <td>
+                    <input style="width:300px;" type="text" id="ST_ADDRESS" name="data[ST_ADDRESS]" class="inputxt" datatype="*" value="{$uData.ST_ADDRESS}" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">邮编：</td>
+                    <td><input type="text" id="ST_POSTCODE" name="data[ST_POSTCODE]" value="{$uData.ST_POSTCODE}" class="inputxt" datatype="*" /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">联系人：</td>
+                    <td><input type="text" id="RP_U_RNAME" name="data[RP_U_RNAME]" value="{$uData.RP_U_RNAME}" class="inputxt" datatype="*"  /></td>
+                    <td><div class="Validform_checktip">日常联系人姓名</div></td>
+                </tr>
+                
+                 <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">电话：</td>
+                    <td><input type="text" id="ST_PHONE" name="data[ST_PHONE]" value="{$uData.ST_PHONE}" class="inputxt" datatype="*"  /></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">手机：</td>
+                    <td><input type="text" id="ST_MOBILE" name="data[ST_MOBILE]" value="{$uData.ST_MOBILE}" class="inputxt"  datatype="m" errormsg="手机号码格式不对！"/></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">邮箱：</td>
+                    <td><input type="text" id="ST_EMAIL" name="data[ST_EMAIL]" value="{$uData.ST_EMAIL}" class="inputxt"  datatype="e" errormsg="邮箱格式不对！" /></td>
+                    <td><div class="Validform_checktip">联系邮箱，用于接收服务单通知</div></td>
+                </tr>
+                
+            </table>
+		</fieldset>
+		<fieldset>
+    		<legend>银行信息</legend>
+    		
+	    		<table width="100%">
+	                <tr>
+	                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+	                    <td style="width:100px;">开户行</label>：</td>
+	                    <td style="width:205px;"><input type="text" id="ST_BANK_NAME" value="{$uData.ST_BANK_NAME}" name="data[ST_BANK_NAME]" class="inputxt" datatype="*"  /></td>
+	                    <td><div class="Validform_checktip"></div></td>
+	                </tr>
+	                <tr>
+	                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+	                    <td style="width:100px;">户名</label>：</td>
+	                    <td style="width:205px;"><input type="text" id="ST_ACCOUNT_NAME" name="data[ST_ACCOUNT_NAME]" value="{$uData.ST_ACCOUNT_NAME}" class="inputxt" datatype="*" /></td>
+	                    <td><div class="Validform_checktip"></div></td>
+	                </tr>
+	                 <tr>
+	                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+	                    <td style="width:100px;">账号：</td>
+	                    <td style="width:205px;"><input type="text" id="ST_ACCOUNT" name="data[ST_ACCOUNT]" value="{$uData.ST_ACCOUNT}" class="inputxt" datatype="*" /></td>
+	                    <td><div class="Validform_checktip"></div></td>
+	                </tr>
+	               
+	                
+	            </table>
+    	</fieldset>
+    	<fieldset>
+    		<legend>服务地区信息</legend>
+    		
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:100px;">服务地区：</label></td>
+                    <td style="width:205px;">
+                    <table>
+                    		<tr>
+                    			<td>
+                    				<select  id="ARL1" >
+										<option value="">--省市--</option>
+										<volist name="AR_L1" id="vo">
+										<option value="{$vo}" >{$vo}</option>
+										</volist>
+									</select>
+                    			</td>
+                    			<td>
+                    				<select  id="ARL2" >
+										<option value="">--市辖区--</option>
+									</select>
+                    			</td>
+                    			<td>
+                    				<select id="ARL3" >
+										<option value="">--区县--</option>
+									</select>
+                    			</td>
+                    		</tr>
+                    	</table>
+                    	<span class="spanButton" onclick="addSrvArea();">&nbsp;添加&nbsp;</span></td>
+                    <td><div class="Validform_checktip"  id="srvareaTitle" style="padding-top:5px;">服务队负责的地区，不同服务队不可重叠</div></td>
+                
+                </tr>
+                
+                <tr>
+                    <td class="need"></td>
+                    <td style="width:100px;"></td>
+                    <td>
+                    <div id="arlist">
+                		<volist name="sList" id="vo" key='k'>
+                			<div ><span id='sArea{$k}'>{$vo}</span>&nbsp;&nbsp;<img src='__PUBLIC__/images/table/ico_delete.gif' align='absmiddle' title='删除' onclick='delArea("sArea{$k}");'  class='areadel' /></div>
+                		</volist>
+               		</div>
+               		<div style="display:none">
+               		<textarea id="srv_area" name="srv_area">{$sText|default=''}</textarea>
+               		</div>
+                   </td>
+                    <td></td>
+                </tr>
+                
+               
+                
+            </table>
+    	</fieldset>
+    	<fieldset >
+    		<table width="100%" align="center">
+    			<tr>
+    				<td align="center">
+    					<input type="hidden" name="data[ST_ID]" value="{$uData.ST_ID}">
+    					<input type="hidden" name="st_id" value="{$st_id}">
+    					<input style="width:100px;cursor:pointer;" type="submit" name="submit" id="submit" value="保存" />
+    				</td>
+    			</tr>
+    		</table>
+    		
+    		</fieldset>
+    	
+	</form>
+</div>
+</body>
+<if condition="$uData.AR_L1 neq ''">
+	<literal>
+	<script>
+		$("#AR_L2").empty();
+		$("#AR_L2").append('<option value="">--市辖区--</option>');
+		setArea('AR_L1',$("#AR_L1").val(),'AR_L2','{$uData.AR_L2}');
+		
+		$('#AR_L3').empty();
+		$('#AR_L3').append('<option value="">--区县--</option>');
+		setArea('AR_L1|AR_L2',"{$uData.AR_L1}|{$uData.AR_L2}",'AR_L3','{$uData.AR_L3}');
+	</script>
+	</literal>
+</if>

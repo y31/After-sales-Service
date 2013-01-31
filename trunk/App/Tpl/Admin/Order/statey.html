@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/jquery.form.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<style type="text/css">
+body{background-color:#FFF}
+.inputYes{color:#FF0000}
+</style>
+<script>
+
+</script>
+</head>
+<body>
+<div  style="padding-top:25px;">
+<form action="" method="post" id="roleForm" class="registerform"   >
+<fieldset>
+	<table border="0" cellspacing="0" cellpadding="0">
+		
+		<tr>
+            <td style=""><font color="red">*</font>备注</td>
+            <td style=""><textarea style="width:300px;" rows="3" cols="60" id="O_CS_MEMO" name="data[O_CS_MEMO]" datatype="*"></textarea></td>
+            <td><div class="Validform_checktip">其他说明(200字以内)</div></td>
+		</tr>
+		<tr>
+			<td colspan="3" style="text-align:center">
+					<input type="hidden" name="o_id" value="{$o_id}">
+					<input type="hidden" name="state" value="{$state}">
+					<input type="hidden" name="op" value="1">
+    				<input style="width:60px;height:30px;text-align:center;padding:2px 4px;" type="submit" value="确认" />
+			</td>
+		</tr>
+	</table>
+</fieldset>
+</form>
+</div>
+</body>
+<script>
+$(document).ready(function(){
+	
+	$(".registerform").Validform({
+		
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+
+		},
+		usePlugin:{
+			jqtransform:{}
+		}
+	});
+	
+	$('#roleForm').submit(function(){
+		$(this).ajaxSubmit(options); 
+		return false;
+	});
+	//$('#roleForm').ajaxSubmit(options); 
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+});
+function showRequest(formData, jqForm, options) { 
+	if($("#O_CS_MEMO").val()==""){
+		return false;
+	}
+	
+	return true;
+	
+}
+function showResponse(rs, statusText, xhr, $form)  { 
+	
+	if(rs=="y"){
+		
+		alert("确认成功");
+		parent.window.location.reload();
+	}else{
+		//pAlert("提示信息","确认失败");
+		alert("确认失败");
+		parent.window.location.reload();
+	}
+	// parent.window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+}
+</script>
+</html>

@@ -1,0 +1,98 @@
+<include file="Public:html:inHeader" />
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+$(document).ready(function(){
+
+	$(".registerform").Validform({
+		tiptype:function(msg,o,cssctl){
+			if(!o.obj.is("form")){
+				var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+				cssctl(objtip,o.type);
+				objtip.text(msg);
+			}
+		},
+		usePlugin:{
+			jqtransform:{}
+		},
+		ajaxPost:true,
+		callback:function(data){
+			alert(data.info);
+			if(data.status=="y"){
+				parent.window.location.reload();
+				/*setTimeout(function(){
+					$.Hidemsg(); //公用方法关闭信息提示框;显示方法是$.Showmsg("message goes here.");
+				},2000);
+				*/
+			}
+		}
+		
+	});
+	
+	
+});
+
+
+
+</script>
+<style>
+body{background-color:#ffffff}
+</style>
+</head>
+<body >
+<div >
+	<form action="{$action}" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >产品管理</legend>
+    		
+    		<div id="product">
+    		<table width="100%">
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">品牌</label>：</td>
+                    <td style="width:205px;">
+                    <input type="text" id="P_BRAND" value="{$uData.P_BRAND}" name="data[P_BRAND]" class="inputxt" datatype="*"  /></td>
+                   
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+               
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">产品类型</label>：</td>
+                    <td style="width:205px;">
+                    <input type="text" id="P_CATEGORY" name="data[P_CATEGORY]" value="{$uData.P_CATEGORY}" class="inputxt" datatype="*"/></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+                <tr>
+                    <td class="need" style="width:10px;"><span class="inputYes">*</span></td>
+                    <td style="width:70px;">产品型号</label>：</td>
+                    <td style="width:205px;">
+                   <input type="text" id="P_MODEL" name="data[P_MODEL]" value="{$uData.P_MODEL}" class="inputxt" datatype="*"/></td>
+                    <td><div class="Validform_checktip"></div></td>
+                </tr>
+               
+            </table>
+            </div>
+		</fieldset>
+		
+    	<fieldset class="action">
+    	<input type="hidden" name="data[P_ID]" value="{$uData.P_ID}">
+    	<input type="hidden" name="P_ID" value="{$P_ID}">
+    	<input type="hidden" name="op" value="1">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>
+
+
+<include file="Public:html:inFooter" />

@@ -1,0 +1,146 @@
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<script type="text/javascript" src="__JS__/NiceForms/niceforms.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="__JS__/NiceForms/niceforms-default.css" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+<literal>
+<script>
+$(document).ready(function(){
+
+
+	$("#submitImage").bind("click",function(){
+		$('#orderForm').ajaxSubmit(options); 
+	});
+	
+	var options={
+			 beforeSubmit:  showRequest,  
+			 success:       showResponse  
+	};
+	function showRequest(formData, jqForm, options) {  
+		
+		if($("#U_NAME").val()==""){
+			$("#Validform_checktip_U_NAME").html("<img src='__PUBLIC__/js/validfrom/images/error.png' /><font color='red'>请输入邮箱/手机号码找回密码</a>");
+			return false;
+		}else{
+			$("#Validform_checktip_U_NAME").html("<img src='__PUBLIC__/js/validfrom/images/right.png' />");
+		}
+		 return true;
+	}
+	
+	function showResponse(rs, statusText, xhr, $form)  { 
+		
+		var type='2';
+		var info="找回密码失败！";
+		var url="?g=Home&m=Member&a=getPwd";
+		
+		if(rs=="y"){
+			info="找回密码成功！";
+			type='1';
+			url="?g=Home&m=Member&a=login";
+		}
+		
+		window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+		
+	} 
+	
+});
+function userTip(sob,ct){
+	 // 阴影+圆角
+    $("#"+sob).qtip({
+  	 	position: {
+           my: 'bottom left',
+           at: 'top center'
+      },
+      style: {
+        classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+      },
+      show: {
+			event: 'click', // Don't specify a show event...
+			ready: true // ... but show the tooltip when ready
+		},
+      content: {
+   	   text:ct,
+   	   title:{
+   	    	  text:"提示信息", 
+   	    	  button:"关闭"
+   	       }
+      },
+      hide:false
+      
+    });
+}
+</script>
+</literal>
+<style>
+
+.content{
+	background-color:#F9F9F9;
+	width:750px;
+	height:440px;
+	
+}
+</style>
+<div id="container">
+<div class="content" style="height:380px;">
+<form action="" method="post" id="orderForm"  class="niceform">
+	<div style="padding-top:20px;">
+		<table border=0 cellspacing=0 cellpadding=0 width="100%">
+			<tr>
+				
+				<td colspan="3" align="left" valign="bottom">
+				<div style="padding-left:20px;height:20px;color:#FF7625;font-weight:bold;font-size:15px;">找回密码
+				
+				</div>
+				
+				</td>
+			</tr>
+			<tr>
+			<td colspan="3" valign="top">
+				
+				<div style="height:2px;width:150px;background-color:#FF7625;margin-left:20px;">
+				
+				</div>
+				
+				
+				</td>
+			</tr>
+			<tr>
+				<td width="120px">
+					
+				</td>
+				
+				<td  align="left">
+					<div style="padding-top:15px;">
+					<table border="0" >
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:80px;line-height:30px;"></td>
+		                    <td style=""><input type="text" id="U_NAME" name="U_NAME" class="inputxt" datatype="*" nullmsg="请输入邮箱/手机号码" tip="请输入邮箱/手机号码" style="width:150px;" /></td>
+		                    <td><div class="Validform_checktip" id="Validform_checktip_U_NAME">请输入邮箱/手机号码找回密码</div></td>
+		                </tr>
+		                <tr>
+		                    <td class="need" style="width:0px;"></td>
+		                    <td style="width:0px;"></td>
+		                    <td style="height:40px;" valign="bottom" align="center">
+		                    <br/> <br/>
+		                    	
+    							<input type="hidden" name="op" value="1">
+    							<div style="display:none"><input type="submit" id="sumit" name="sumit" ></div>
+		                    	<img src="__PUBLIC__/images/home/bg-ok-button.png" id="submitImage" align="absmiddle" style="cursor:pointer">
+		                    </td>
+		                    <td></td>
+		                </tr>
+		                    
+					
+					</table>
+					</div>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+	</form>
+</div>
+</div>

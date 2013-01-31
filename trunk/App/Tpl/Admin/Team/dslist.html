@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script>
+$(document).ready(function(){
+	//指派
+	$("#zhipaiButton").bind("click",function(){
+		var list= $('input:radio[name="checkData"]:checked').val(); 
+		 if(list){
+			 var url="o_id={$o_id}&st_id="+list+"&rd="+Math.random();
+			// alert(url);
+				$.ajax({
+					   type: "POST",
+					   url: "?g=Admin&m=Order&a=saveTeam",
+					   data: url,
+					   dataType:'text',
+					   success: function(msg){
+						 if(msg=="y"){
+							 alert('服务队指派成功');
+							 parent.window.location.reload();
+						 }else{
+							 alert('服务队指派失败');
+						 }
+					   }
+				});
+		 }else{
+			 alert('请选择服务队');
+		 }
+	});
+	
+	$("#sAr").bind("click",function(){
+		var url="?g=Admin&m=Index&a=sarea&f1=AR_ID&f2=AR_ADDRESS";
+		pDialog('',url,400,350);
+	});
+	
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a'  || _t=='t' || _t=='f1' || _t=='f2' /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		if($("#AR_ADDRESS").val()==""){
+			$("#AR_ID").val('');
+		}
+		var _newHttp=_http+"?"+_usePara.join('&');
+		
+		_newHttp+="&ST_NAME="+encodeURI($("#ST_NAME").val())+"&RP_U_RNAME="+encodeURI($("#RP_U_RNAME").val())+"&AR_ADDRESS="+encodeURI($("#AR_ADDRESS").val())+"&AR_ID="+encodeURI($("#AR_ID").val());
+		
+		window.location.href=_newHttp;
+		
+	});
+});
+
+function openDialog(url){
+	pDialog('',url,600,450);
+}
+function dialogClose(){
+	pclose();
+}
+
+
+</script>
+<style>
+a {color:#FFFFFF}
+</style>
+</head>
+
+<body>
+<br />
+<fieldset>
+    <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+	  <tr>
+	  	<td align="center">
+	  		<form action="" method="post">
+		  		<table width="100%"  border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+		  			<tr>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">名称：</span></td>
+		  				<td bgcolor="#FFFFFF" >
+		  					<input class="searchInput" type="text" name="ST_NAME" id="ST_NAME" value="{$ST_NAME}"></input>
+		  				</td>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">地区：</span></td>
+		  				<td bgcolor="#FFFFFF" align="left">
+		  					<input class="searchInput" type="text" name="AR_ADDRESS" id="AR_ADDRESS" value="{$AR_ADDRESS}"></input>
+		  					<input type="hidden" name="AR_ID" id="AR_ID" value="{$AR_ID}"></input>
+		  					<span class="spanButton" id="sAr">&nbsp;查&nbsp;</span>
+		  				</td>
+		  				<td bgcolor="#FFFFFF"><span class="STYLE10">联系人：</span></td>
+		  				<td bgcolor="#FFFFFF">
+		  					<input class="searchInput" type="text" name="RP_U_RNAME" id="RP_U_RNAME" value="{$RP_U_RNAME}"></input>
+		  				</td>
+		  				
+		  				<td bgcolor="#FFFFFF">
+		  					<input type="button" name="submit" id="submit" value="查询"></input> 
+		  				</td>
+		  			</tr>
+		  		</table>
+	  		</form>
+	  	</td>
+	  </tr>
+	  <tr>
+	    <td>
+	    
+	    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce" >
+	      <tr>
+	        <th width="4%" height="20" bgcolor="d3eaef" class="STYLE10"><div align="center">
+	          
+	        </div></th>
+	        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">名称</span></div></th>
+	        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">地区</span></div></th>
+	        
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">联系人</span></div></th>
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">手机</span></div></td>
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">电话</span></div></td>
+	        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">邮箱</span></div></td>
+	       </tr>
+	      <volist name="teamList" id="data">
+			<tr>
+			     <td height="20" bgcolor="#FFFFFF"><div align="center">
+		          <input type="radio" name="checkData" id="checkData_{$data.ST_ID}" value="{$data.ST_ID}" />
+		        </div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.ST_NAME}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.ST_AREA}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.RP_U_RNAME}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.ST_MOBILE}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.ST_PHONE}</span></div></td>
+		        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.ST_EMAIL}</span></div></td>
+		   
+	      	</tr>
+	      </volist>
+	    </table>
+	    
+	    </td>
+	  </tr>
+	  <tr>
+	  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+	  </tr>
+    </table>
+</fieldset>
+<div id="zhipaiDiv" style="text-align:center">
+	<input type="button" id="zhipaiButton" value="指派" />
+	
+</div>
+</body>
+</html>

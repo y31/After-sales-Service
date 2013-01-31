@@ -1,0 +1,338 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script src="__JS__/qtip/js/jquery.qtip.min.js"></script>
+<link href="__JS__/qtip/css/jquery.qtip.min.css" rel="stylesheet" type="text/css" />
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script type="text/javascript" src="__JS__/lightbox/js/jquery.lightbox-0.4.js"></script>
+<link rel="stylesheet" type="text/css" href="__JS__/lightbox/css/jquery.lightbox-0.4.css" media="screen" />
+<script>
+$(document).ready(function() {
+	
+	
+	$("#exportButton").qtip({
+		content:"<img src='__PUBLIC__/images/loading.gif' align='absmiddle'/>正在生成数据,请稍候.",
+		position: {
+            my: 'bottom left',
+            at: 'top center'
+       },
+       style: {
+         classes: 'ui-tooltip-light ui-tooltip-shadow ui-tooltip-rounded'
+       },
+		show: {
+		    event: 'click', // Show it on click...
+		    solo: true, // ...and hide all other tooltips...
+		    //ready: true,
+		    modal: true // ...and make it modal
+		  },
+		  hide: false
+	});
+	$("#exportButton").bind('click',function(){
+		var pa="&O_NO="+encodeURI($("#O_NO").val())+"&O_TYPE="+encodeURI($("#O_TYPE").val())+"&O_STATE="+encodeURI($("#O_STATE").val())+"&CREATED_AT="+encodeURI($("#CREATED_AT").val())+"&CU_NAME="+encodeURI($("#CU_NAME").val())+"&O_MOBILE="+encodeURI($("#O_MOBILE").val())+"&AR_ADDRESS="+encodeURI($("#AR_ADDRESS").val())+"&ST_NAME="+encodeURI($("#ST_NAME").val())+"&CU_ID="+encodeURI($("#CU_ID").val())+"&AR_ID="+encodeURI($("#AR_ID").val())+"&stype={$stype}";
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Admin&m=Order&a=dataExport",
+			   data:pa,
+			   dataType:'text',
+			   success: function(msg){
+				   $("#qtip-overlay").click();
+			   		var url="?g=Admin&m=Order&a=export&path="+encodeURIComponent(msg);
+			   		pDialog("下载",url,300,260);
+			   }
+			}); 
+		
+	});
+	$("#sCr").bind("click",function(){
+		var url="?g=Admin&m=User&a=slist&t=c&f1=CU_ID&f2=CU_NAME";
+		openDialog(url);
+	});
+	$("#sAr").bind("click",function(){
+		var url="?g=Admin&m=Index&a=sarea&f1=AR_ID&f2=AR_ADDRESS";
+		openDialog(url);
+	});
+	//查询
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a' || _t=='type'  /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		if($("#CU_NAME").val()==""){
+			$("#CU_ID").val('');
+		}
+		if($("#AR_ADDRESS").val()==""){
+			$("#AR_ID").val('');
+		}
+		var _newHttp=_http+"?"+_usePara.join('&');
+		_newHttp+="&O_NO="+encodeURI($("#O_NO").val())+"&O_TYPE="+encodeURI($("#O_TYPE").val())+"&O_STATE="+encodeURI($("#O_STATE").val())+"&CREATED_AT="+encodeURI($("#CREATED_AT").val())+"&CU_NAME="+encodeURI($("#CU_NAME").val())+"&O_MOBILE="+encodeURI($("#O_MOBILE").val())+"&AR_ADDRESS="+encodeURI($("#AR_ADDRESS").val())+"&ST_NAME="+encodeURI($("#ST_NAME").val())+"&CU_ID="+encodeURI($("#CU_ID").val())+"&AR_ID="+encodeURI($("#AR_ID").val());
+		window.location.href=_newHttp;
+		
+	});
+	
+	$("#waitp").click(function(){
+		window.location.href="?g=Admin&m=Order&a=jsList&stype=1";
+	});
+	$("#finshWait").click(function(){
+		window.location.href="?g=Admin&m=Order&a=jsList&stype=10";
+	});
+	$("#setjiesuan").click(function(){
+		jiesuan();
+	});
+	$("#allCheckData").bind("click",function(){
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				$(this).removeAttr("checked");
+				
+			}else{
+				$(this).attr("checked",true);
+			}
+		});
+	});
+	$("#portfolio a").lightBox();
+} );
+
+function openDialog(url){
+	pDialog('',url,500,380);
+}
+function dialogClose(){
+	pclose();
+}
+function jiesuan(id){
+	if(!window.confirm("确认操作？")){
+		return false;
+	}
+	var __list='';
+	if(id){
+		__list=id;
+	}else{
+		var _chekList=[];
+		$("input[name='checkData[]']").each(function(){
+			if($(this).attr("checked")){
+				_chekList.push($(this).val());
+			}
+		});
+		if(_chekList.length<1){
+			alert("请选择需要结算的服务单");
+			return false;
+		}
+		if(_chekList.length>0){
+			__list=_chekList.join(',');
+		}
+		
+	}
+	if(__list){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Admin&m=Order&a=changeState",
+			   data: "oids="+__list,
+			   success: function(msg){
+				   if(msg=='y'){
+					   alert("操作成功");
+					   window.location.reload();
+				   }else{
+					   alert("操作失败");
+				   }
+			     
+			   }
+			}); 
+	}
+	
+}
+
+function showdetail(o_id){
+	var url="?g=Admin&m=Order&a=viewdetail&O_ID="+o_id;
+	pDialog('查看详情',url,830,600);
+}
+function setLightBox(id){
+	//alert(id);
+	//dialogClose();
+	$('#imageclick_'+id).click();
+	
+}
+</script>
+<style>
+.bgcolor{color:#FFFFFF;cursor:pointer;}
+
+</style>
+</head>
+
+<body>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="30"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td height="24" bgcolor="#353c44">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="8%"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="6%" height="19" valign="bottom"><div align="center"><img src="__PUBLIC__/images/tb.gif" width="14" height="14" /></div></td>
+                <td width="94%" valign="bottom"><span class="STYLE1"> 结算单列表</span></td>
+              </tr>
+            </table></td>
+            <td  width="92%"><div align="right"><span class="STYLE1">
+             <img src="__PUBLIC__/images/table/user_add.gif" width="16" height="16" align="absmiddle"/> <span class="bgcolor" id="waitp">未结算 </span>  &nbsp; <img src="__PUBLIC__/images/table/user_del.gif" width="16" height="16" align="absmiddle"/> <span id="finshWait" class="bgcolor" >已结算  </span>  &nbsp;&nbsp;<img src="__PUBLIC__/images/table/user_edit.gif" width="16" height="16" align="absmiddle"/> <span id="setjiesuan" class="bgcolor" >设为已结算</span>      &nbsp;</span></span><span class="STYLE1"> &nbsp;</span></div></td>
+          </tr>
+        </table></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+  	<td align="center">
+	  		<table width="80%"  border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+	  			<tr>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10"　>编号：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput" type="text" name="O_NO" id="O_NO" value="{$outSearch.O_NO}"></input>
+	  				</td>
+	  				<!--  
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">结算状态：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select name="O_F_STATE" id="O_F_STATE" class="searchSelect">
+	  						<volist name="astate" id="vo" >
+	  							<assign name="typeid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.O_F_STATE eq $typeid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  					
+	  				</td>
+	  				-->
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">类型：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select name="O_TYPE" id="O_TYPE" class="searchSelect">
+	  						<volist name="type" id="vo" >
+	  							<assign name="typeid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.O_TYPE eq $typeid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  					
+	  				</td>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">状态：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select name="O_STATE" id="O_STATE" class="searchSelect">
+	  						<volist name="state" id="vo" >
+	  							<assign name="stateid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.O_STATE eq $stateid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  				</td>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">创建时间：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select name="CREATED_AT" id="CREATED_AT" class="searchSelect">
+	  						<volist name="createTime" id="vo" >
+	  							<assign name="timeid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.CREATED_AT eq $timeid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  					
+	  				</td>
+	  				<td rowspan="2" bgcolor="#FFFFFF" align="center">
+	  					<div style="margin-left:10px;">
+	  						<input  name="submit" class="searchButton" id="submit" type="button" value="查询" />
+	  						<input  class="searchExport"  id="exportButton" type="button" value="导出" src="__PUBLIC__/images/table/xls.gif" />
+	  					</div>
+	  					
+	  				</td>
+	  			</tr>
+	  			<tr>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">客户：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput" type="text" name="CU_NAME" id="CU_NAME" value="{$outSearch.CU_NAME}"></input>
+	  					<input type="hidden" name="CU_ID" id="CU_ID" value="{$outSearch.CU_ID}"></input>
+	  					<span class="spanButton" id="sCr">&nbsp;查&nbsp;</span>
+	  				</td>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">手机：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput"  type="text" name="O_MOBILE" id="O_MOBILE" value="{$outSearch.O_MOBILE}"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">地区：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput" type="text" name="AR_ADDRESS" id="AR_ADDRESS" value="{$outSearch.AR_ADDRESS}"></input>
+	  					<input type="hidden" name="AR_ID" id="AR_ID" value="{$outSearch.AR_ID}"></input>
+	  					<span class="spanButton" id="sAr">&nbsp;查&nbsp;</span>
+	  				</td>
+	  				<td bgcolor="#FFFFFF" align="left"><span class="STYLE10">服务队：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput"  type="text" name="ST_NAME" id="ST_NAME" value="{$outSearch.ST_NAME}"></input>
+	  				</td>
+	  				
+	  			</tr>
+	  		</table>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    
+    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce" >
+      <tr>
+      <if condition="$stype neq 10" >
+        <th width="4%" height="20" bgcolor="d3eaef" class="STYLE10"><div align="center">
+	          <input type="checkbox" id="allCheckData"/>
+	        </div></th>
+	   </if>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">编号</span></div></th>
+        <th width="5%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">类型</span></div></th>
+        <th width="5%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">状态</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">结算状态</span></div></th>
+        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">地区</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">客户</span></div></th>
+        <th width="15%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">产品</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">服务队</span></div></th>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">创建时间</span></div></td>
+        <th width="10%" height="20" bgcolor="d3eaef" class="STYLE6"><div align="center"><span class="STYLE10">操作</span></div></th>
+      </tr>
+      <volist name="orderList" id="data">
+		<tr>
+		 <if condition="$stype neq 10" >
+	       <td height="20" bgcolor="#FFFFFF"><div align="center">
+		          <input type="checkbox" name="checkData[]" id="checkData_{$data.O_ID}" value="{$data.O_ID}" />
+		        </div></td>
+		  </if>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19"><a href="#" onclick="showdetail('{$data.O_ID}');return false;">{$data.O_NO}</a></span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.O_TYPE}</span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_STATE}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_F_STATE_NAME}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_AREA}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.CU_NAME}</div></td>
+
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_PRODUCT}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.ST_NAME}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.CREATED_AT}</div></td>
+	        <td height="20" bgcolor="#FFFFFF"><div align="center" class="STYLE21">
+	       <div style="display:none">
+	        <if condition="$data.P_INSTALL_CARD neq ''">
+           	<span id="portfolio"><a id="imageclick_{$data.O_ID}" href="{$data.P_INSTALL_CARD}" ></a></span>
+           
+           	</if>
+	        </div>
+	       <if condition="$stype neq 10" >
+	        <a href="#" onclick="jiesuan('{$data.O_ID}');return false;">结算</a>
+	        </if>
+	        </div></td>
+	         
+      	</tr>
+      </volist>
+    </table>
+    
+    </td>
+  </tr>
+  <tr>
+  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+  </tr>
+    </table></td>
+  </tr>
+</table>
+</body>
+</html>

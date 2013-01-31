@@ -1,0 +1,76 @@
+<include file="Public:html:inHeader" />
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+
+<link href="__JS__/validfrom/plugin/jqtransform/jqtransform.css" type="text/css" rel="stylesheet" />
+
+
+<script type="text/javascript" src="__JS__/validfrom/js/Validform_v5.2_min.js"></script>
+
+<script type="text/javascript" src="__JS__/validfrom/plugin/jqtransform/jquery.jqtransform-min.js"></script>
+
+<title>{$title|default=''}</title>
+<script>
+	$(document).ready(function(){
+		
+		$(".registerform").Validform({
+			tiptype:function(msg,o,cssctl){
+				if(!o.obj.is("form")){
+					var objtip=o.obj.parents("td").next().find(".Validform_checktip");
+					cssctl(objtip,o.type);
+					objtip.text(msg);
+				}
+
+			},
+			usePlugin:{
+				jqtransform:{}
+			},
+			ajaxPost:true,
+			callback:function(data){
+				alert(data.info);
+				
+			},
+			datatype:{
+				"z1-60" : /^[\s\S*]{1,60}$/
+			}
+			
+		});
+		
+	});
+	
+</script>
+
+</head>
+<body class="main">
+
+<div >
+	<form action="?g=Admin&m=User&a=sendsms" method="post" class="registerform" id="roleForm">
+		<fieldset>
+    		<legend>短信内容</legend>
+    		
+	    		<table>
+		    		 <tr>
+		                  <td class="need" style="width:0px;"></td>
+		                  <td style="width:90px;line-height:30px;"></td>
+		                  <td style="width:;">
+		                 <textarea rows=5 cols=60 id="O_CONTENT" name="O_CONTENT" style="width:250px" datatype="z1-60" errormsg="最多不能超过60个字符" ></textarea>
+		                  </td>
+		                  <td><div class="Validform_checktip" id="Validform_checktip_AR_L" style="line-height:30px;">备注信息，最多60个字符</div></td>
+		              </tr>
+		               
+	    		</table>
+    	</fieldset>
+    	<fieldset class="action">
+    	<input type="hidden" name="op" value="1">
+    	<input type="hidden" name="uid" value="{$uid}">
+    	<input type="hidden" name="mobile" value="{$mobile}">
+    				<input type="submit" name="submit" id="submit" value="保存" />
+    	</fieldset>
+    	
+	</form>
+</div>
+</body>
+
+<include file="Public:html:inFooter" />

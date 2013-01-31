@@ -1,0 +1,26 @@
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script>
+function setURL(url){
+	if(url){
+		window.location.href=url;
+	}
+}
+</script>
+<style>
+
+</style>
+<div class="mainMenu">
+	<volist name="menu" id="vo">
+		<assign name="checkid" value="$vo.id" />  
+		<if condition="$cColor eq $checkid">
+		<div class="menuDivClick" onclick="setURL('{$vo.url}');"><span>{$vo.name}</span></div>
+		<else />
+		<div class="menuDiv" onclick="setURL('{$vo.url}');"><span>{$vo.name}</span></div>
+		</if>
+	</volist>
+	<div class="menuBottomImage">
+		<div style="padding-left:5px;padding-top:5px;"><img src="__PUBLIC__/images/home/phone1.png" align="absmiddle"></div>
+		<div style="padding-left:5px;padding-top:3px;"><img src="__PUBLIC__/images/home/qq.png" align="absmiddle"></div>
+	</div>
+</div>

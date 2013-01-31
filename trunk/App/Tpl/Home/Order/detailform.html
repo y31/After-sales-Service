@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<link rel="stylesheet" href="__JS__/validfrom/css/style.css" type="text/css" media="all" />
+<link href="__JS__/validfrom/css/demo.css" type="text/css" rel="stylesheet" />
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script type="text/javascript" src="__JS__/lightbox/js/jquery.lightbox-0.4.js"></script>
+<link rel="stylesheet" type="text/css" href="__JS__/lightbox/css/jquery.lightbox-0.4.css" media="screen" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+<script>
+$(document).ready(function(){
+	
+	
+	//完成 
+	$("#finish").bind('click',function(){
+		savedata(40);
+	});
+	
+	//中断 
+	$("#break").bind('click',function(){
+		breakorder();
+	});
+	 $('#portfolio a').lightBox();
+	 $("#oprint").click(function(){
+		 window.open ('?g=Home&m=Order&a=out&O_ID={$data.O_ID}','newwindow','height=550,width=750,top=50,left=300,toolbar=no,menubar=no,scrollbars=no, resizable=no,location=no, status=no');
+	 });
+	 //预约时间
+	 $("#yuyuetime").click(function(){
+		 var url="?g=Home&m=Order&a=yytime&o_id={$data.O_ID}";
+		pDialog('',url,550,250);
+	 });
+});
+function breakorder(){
+	var url="?g=Home&m=Order&a=obreak&o_id={$data.O_ID}";
+	pDialog('中断',url,550,300);
+}
+function savedata(state){
+	var url="?g=Home&m=Order&a=finish&o_id={$data.O_ID}";
+	pDialog('安装完成',url,550,360);
+	
+	/*if(window.confirm("确认操作？")){
+		var url="o_id={$data.O_ID}&state="+state;
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Home&m=Order&a=saveState",
+			   data: url,
+			   dataType:'text',
+			   success: function(msg){
+				 if(msg=="y"){
+					 alert('操作成功');
+					 
+				 }else{
+					 alert('操作失败');
+				 }
+			   }
+		});
+	}
+	*/
+}
+function openDialog(url){
+	pDialog('服务队信息',url,600,450);
+}
+function dialogClose(){
+	pclose();
+}
+function showImage(id){
+	var url="?g=Home&m=Order&a=showImage&o_id="+id;
+	pDialog('安装卡',url,600,500);
+}
+</script>
+<style>
+a {color:#FFFFFF}
+.cFieldset{margin-top:5px;}
+.content{
+	margin-left:100px;
+    height:480px;
+}
+#crinfo1{
+	height:30px;
+}
+#roleForm table th td{height:30px;line-height:30px;}
+table td{height:30px;line-height:30px;}
+</style>
+</head>
+<body>
+<div id="container">
+<div class="content">
+	<form class="registerform" id="roleForm">
+		<fieldset>
+    		<legend >服务单详情</legend>
+    		
+    			<fieldset class="cFieldset">
+	    			
+	    			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+		                <tr>
+		                    <th width="12%">服务类型</th>
+		                    <td width="88%">
+		                    	{$data.O_TYPE|default='无'}
+		                    	
+		                    	<span style="padding-left:80px">
+		                    		<span style="color:#FF7625;font-weight:bold;">安装方式</span>
+		                    		<span style="padding-left:10px">{$data.O_S_TYPE|getDictValueByKey='INSTALL_MODE',###}</span>
+		                    	</span>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >产品信息</label></th>
+		                    <td style="">
+		                    	{$data.O_PRODUCT|default='无'}，数量 {$data.P_COUNT|default='无'}， {$data.P_BUY_TIME} 购于 {$data.P_CHANNEL|default='无'}，订单号 {$data.SO_ID|default='无'}<br />
+		                    	条形码 {$data.P_BAR_CODE|default='无'}，安装卡 
+		                    	<if condition="$data.P_INSTALL_CARD neq ''">
+		                    	<span id="portfolio"><a href="{$data.P_INSTALL_CARD}" onclick1="showImage('{$data.O_ID}');return false;">查看大图</a></span>
+		                    	<else />
+		                    	无
+		                    	</if>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >服务地址</label></th>
+		                    <td style="">
+		                    	{$data.CU_NAME|default='无'}，{$data.O_MOBILE|default='无'}
+		                    	<if condition="$data.O_PHONE neq ''">，{$data.O_PHONE|default='无'}</if>，{$data.O_AREA}
+		                    	<if condition="$data.O_POSTCODE neq ''">，{$data.O_POSTCODE|default='无'}</if>
+		                    </td>
+		                </tr>
+		                 <tr>
+		                    <th >备注说明</label></th>
+		                    <td style="">
+		                    	{$data.O_MEMO|default='无'}
+		                    </td>
+		                </tr>
+	            	</table>
+            	</fieldset>
+            	<php>
+                  if(ExSession::getSession()->getRoleShortname()=="CR"){
+                </php>
+                  <fieldset class="cFieldset" id="crinfo">
+            		<table width="100%" cellspacing="0" cellpadding="0" border="0">
+		                <tr>
+		                    <th width="12%">服务队信息</th>
+		                    <td width="88%">
+		                    	<table width="100%">
+		                    		<tr>
+		                    			 	<td width="30%">服务队：{$data.ST_NAME|default='无'}</td>
+						                    
+						                    <td width="30%">服务人员：{$data.SRV_NAME|default='无'}</td>
+						                    <td width="40%">电话：{$data.ST_MOBILE|default='无'}，{$data.ST_PHONE|default='无'}</td>
+		                    		</tr>
+		                    	</table>
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+                <php>
+                  }else{
+                </php>
+                  <fieldset class="cFieldset" id="crinfo">
+            		<table width="100%" cellspacing="0" cellpadding="0" border="0">
+		                <tr>
+		                    <th width="12%">客户信息</th>
+		                    <td width="88%">
+		                    	<table width="60%">
+		                    		<tr>
+		                    			 	<td width="10%">会员：</td>
+						                    <td width="20%">
+						                    	{$data.CU_ID_Name|default='无'}
+						                    </td>
+						                    <td width="10%">客户名：</td>
+						                    <td width="20%">
+						                    	{$data.CU_NAME|default='无'}
+						                    </td>
+		                    		</tr>
+		                    	</table>
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+                <php>
+                  }
+                </php>	
+            	
+            	
+            	<fieldset class="cFieldset">
+	    			
+	    			<table width="100%" cellspacing="0" cellpadding="0" border="0">
+		                <tr>
+		                    <th width="12%">处理信息</th>
+		                    <td width="88%">
+		                    	<table width="100%">
+		                    		<tr>
+		                    			<td width="35%">
+		                    			编　　号：{$data.O_NO|default='无'}
+		                    			</td>
+		                    			<td width="35%">
+		                    			提交时间：{$data.CREATED_AT|DateFormat="Y-m-d H:i",###|default='无'}
+		                    			</td>
+		                    			<td width="30%">
+		                    			状　　态：{$data.O_STATE_NAME|default='无'}
+		                    			</td>
+		                    			 	
+		                    		</tr>
+		                    		<tr>
+		                    			<td>
+		                    			要求时间：{$data.O_REQ_TIME|default='无'}
+		                    			</td>
+		                    				<td >
+		                    			预约时间：{$data.O_SRV_APPOINT_TIME|DateFormat="Y-m-d H:i",###|default='无'}
+		                    			</td>
+		                    			<td>
+		                    			服务时间：{$data.O_SRV_TIME|default='无'}
+		                    			</td>
+		                    			
+		                    		</tr>
+		                    		<tr>
+		                    		 <php>
+						                    if(ExSession::getSession()->getRoleShortname()=="CR"){
+						                    	</php>
+						                    	<td ></td>
+							                  
+							                    <php>
+						                    }else{
+						                    	</php>
+						                    	 	<td >结算状态：{$data.O_F_STATE|default='无'}</td>
+								                    
+						                    	<php>
+						                    }
+						                    </php>	
+						                   
+		                    		
+		                    			<td></td>
+		                    			<td></td> 	
+		                    		</tr>
+		                    	
+		                    	</table>
+		                    </td>
+		                   
+		                </tr>
+	            	</table>
+            	</fieldset>
+            		<php>
+            		if(ExSession::getSession()->getRoleShortname()=="SRVTEAM"){
+            		</php>
+            		<table width="100%" align="center" cellspacing="0" cellpadding="0" border="0">
+		                <tr>
+		                    <td align="center" style="text-align:center">
+		                    	<if condition="($data.O_STATE eq 20) OR ($data.O_STATE eq 30)">
+		                    	<input type="button" id="yuyuetime" value="预约时间" style="height:30px;"/>
+		                    	<input type="button" id="finish" value="安装完成" style="height:30px;"/>
+								
+								<input type="button" id="break" value="中断" style="height:30px;"/>
+								</if>
+								<input type="button" id="oprint" value="打印" style="height:30px;"/>
+								
+		                    </td>
+		                </tr>
+	            	</table>
+            	
+            		<php>
+            		}
+            		</php>
+	    			
+		</fieldset>
+	</form>
+</div>
+</div>
+</body>

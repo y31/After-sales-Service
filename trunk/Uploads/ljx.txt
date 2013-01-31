@@ -1,0 +1,12 @@
+<pre>
+Array
+(
+    [P_BREAK_TYPE] => Array
+        (
+            [0] => 联系方式错误
+            [1] => 客户拒绝安装
+        )
+
+    [O_ST_MEMO] => bbb
+)
+</pre>

@@ -1,0 +1,229 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/table.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script type="text/javascript" src="__JS__/NiceForms/niceforms.js"></script>
+<link rel="stylesheet" type="text/css" media="all" href="__JS__/NiceForms/niceforms-default.css" />
+<link href="__CSS__/main.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/popup/popup.js"></script>
+<script src="__JS__/popup/user.js"></script>
+<script>
+$(document).ready(function() {
+	
+	$("#viewBg").bind("click",function(){
+		addBgDialog();
+		return false;
+	});
+	
+	$("#exportButton").bind('click',function(){
+		$.ajax({
+			   type: "POST",
+			   url: "?g=Admin&m=Order&a=dataExport",
+			   dataType:'text',
+			   success: function(msg){
+			   		var url="?g=Admin&m=Order&a=export&path="+encodeURIComponent(msg);
+			   		pDialog("下载",url,300,260);
+			   }
+			}); 
+		
+	});
+	$("#sCr").bind("click",function(){
+		var url="?g=Admin&m=User&a=slist&t=c&f1=CU_ID&f2=CU_NAME";
+		openDialog(url);
+	});
+	$("#sAr").bind("click",function(){
+		var url="?g=Admin&m=Index&a=sarea&f1=AR_ID&f2=AR_ADDRESS";
+		openDialog(url);
+	});
+	//查询
+	$("#submit").bind("click",function(){
+		var _url=window.location.href;
+		var _list=_url.split('?');
+		var _http=_list[0];
+		var _pList=_list[1].split('&');
+		var _usePara=[];
+		for(var i=0;i<_pList.length;i++ ){
+			var _p=_pList[i];
+			var _t=_p.split('=')[0];
+			if(_t=='g' || _t=='m' || _t=='a' || _t=='type'  /*|| _t=="p"*/){
+				_usePara.push(_p);
+			}
+		}
+		
+		if($("#AR_ADDRESS").val()==""){
+			$("#AR_ID").val('');
+		}
+		var _newHttp=_http+"?"+_usePara.join('&');
+		_newHttp+="&O_NO="+encodeURI($("#O_NO").val())+"&O_TYPE="+encodeURI($("#O_TYPE").val())+"&O_STATE="+encodeURI($("#O_STATE").val())+"&CREATED_AT="+encodeURI($("#CREATED_AT").val())+"&CU_NAME="+encodeURI($("#CU_NAME").val())+"&O_MOBILE="+encodeURI($("#O_MOBILE").val())+"&AR_ADDRESS="+encodeURI($("#AR_ADDRESS").val())+"&AR_ID="+encodeURI($("#AR_ID").val());
+		window.location.href=_newHttp;
+		
+	});
+} );
+function addBgDialog(o_id){
+	var url="?g=Admin&m=Order&a=viewBgXg&O_ID="+o_id;
+	pDialog("查看详情",url,600,480);
+}
+function openDialog(url){
+	pDialog('',url,500,380);
+}
+function dialogClose(){
+	pclose();
+}
+</script>
+<style>
+.styleTH{background:url(__PUBLIC__/images/home/th-td.png) repeat-x;font-size:12px;font-weight:bold;text-align:center;}
+td{word-wrap:break-word;background-color:#F9F9F9}
+
+</style>
+</head>
+
+<body>
+<div id="container">
+<div class="content">
+<form  class="niceform">
+<table width="98%" border="0" align="center" cellpadding="0" cellspacing="0">
+	<tr>
+		<td>
+		<div style="width:500px;height:30px;line-height:30px;">
+			<span style="font-weight:bold;">处理提醒 ：</span>
+			<if condition="$stype eq '1'">
+			<span style="color:#FF7625">待处理</span>
+			<else />
+			<span><a href="?g=Home&m=Order&a=srvlist&type=1">待处理</a></span>
+			</if>
+			
+			&nbsp;&nbsp;&nbsp;
+			<if condition="$stype eq '2'">
+			<span style="color:#FF7625">处理中</span>
+			<else />
+			<span><a href="?g=Home&m=Order&a=srvlist&type=2">处理中</a></span>
+			</if>
+			&nbsp;&nbsp;&nbsp;
+			<if condition="$stype eq '3'">
+			<span style="color:#FF7625">已完成</span>
+			<else />
+			<span><a href="?g=Home&m=Order&a=srvlist&type=3">已完成</a></span>
+			</if>
+			
+		</div>
+		<hr />
+		</td>
+	</tr>
+  <tr>
+  	<td align="center">
+	  		<table  border="0" cellpadding="0" cellspacing="0" bgcolor="#a8c7ce">
+	  			<tr>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10"　>编号：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input  type="text" name="O_NO" id="O_NO" value="{$outSearch.O_NO}" style="width:90px;"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">类型：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select size=1 name="O_TYPE" id="O_TYPE" class="searchSelect" style="width:90px;">
+	  						<volist name="type" id="vo" >
+	  							<assign name="typeid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.O_TYPE eq $typeid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  					
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">状态：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select size=1 name="O_STATE" id="O_STATE" style="width:90px;">
+	  						<volist name="state" id="vo" >
+	  							<assign name="stateid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.O_STATE eq $stateid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">创建时间：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<select size=1 name="CREATED_AT" id="CREATED_AT"  style="width:90px;">
+	  						<volist name="createTime" id="vo" >
+	  							<assign name="timeid" value="$vo.id" />
+	  							<option value="{$vo.id}" <if condition="$outSearch.CREATED_AT eq $timeid">selected</if>>{$vo.name}</option>
+	  						</volist>
+	  					</select>
+	  					
+	  				</td>
+	  				
+	  			</tr>
+	  			<tr>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">客户：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput" type="text" name="CU_NAME" id="CU_NAME" value="{$outSearch.CU_NAME}" style="width:90px;"></input>
+	  					
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">手机：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput"  type="text" name="O_MOBILE" id="O_MOBILE" value="{$outSearch.U_RNAME}" style="width:90px;"></input>
+	  				</td>
+	  				<td bgcolor="#FFFFFF"><span class="STYLE10">地区：</span></td>
+	  				<td bgcolor="#FFFFFF" align="left">
+	  					<input class="searchInput" type="text" name="AR_ADDRESS" id="AR_ADDRESS" value="{$outSearch.AR_ADDRESS}" style="width:90px;"></input>
+	  					<input type="hidden" name="AR_ID" id="AR_ID" value="{$outSearch.AR_ID}"></input>
+	  					<span class="spanButton" id="sAr">&nbsp;查&nbsp;</span>
+	  				</td>
+	  				<td  bgcolor="#FFFFFF" align="center" colspan="2">
+	  					<div style="margin-left:10px;">
+	  						
+	  						<img src="__PUBLIC__/images/home/chaxun.png" id="submit" name="submit" align="absmiddle" alt="" />
+	  					</div>
+	  					
+	  				</td>
+	  				
+	  			</tr>
+	  			
+	  		</table>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    
+    <table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#a8c7ce" >
+      <tr>
+        <td width="15%" height="20"  class="styleTH"><span class="STYLE10">编号</span></td>
+        <td width="5%"   height="20"  class="styleTH"><span class="STYLE10">类型</span></td>
+        <td width="10%"   height="20"  class="styleTH"><span class="STYLE10">状态</span></td>
+        <td width="15%"  height="20"  class="styleTH"><span class="STYLE10">地区</span></td>
+        <td width="10%"  height="20"  class="styleTH"><span class="STYLE10">客户</span></td>
+        <td width="10%"  height="20"  class="styleTH"><span class="STYLE10">手机</span></td>
+        <td width="15%"   height="20"  class="styleTH"><span class="STYLE10">产品</span></td>
+        <td width="10%"   height="20" class="styleTH"><span class="STYLE10">创建时间</span></td>
+        <td width="10%"   height="20" class="styleTH"><span class="STYLE10">操作</span></td>
+        
+      </tr>
+      <volist name="orderList" id="data">
+		<tr>
+	       
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19"><a href="?g=Home&m=Order&a=detail&O_ID={$data.O_ID}" >{$data.O_NO}</a></span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE6"><div align="center"><span class="STYLE19">{$data.O_TYPE}</span></div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_STATE}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_AREA}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.CU_NAME}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_MOBILE}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.O_PRODUCT}</div></td>
+	        
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center">{$data.CREATED_AT}</div></td>
+	        <td height="20" bgcolor="#FFFFFF" class="STYLE19"><div align="center" class="STYLE21">
+	        	<if condition="$stype eq '1'">
+	        	<a href="?g=Home&m=Order&a=detail&O_ID={$data.O_ID}&zp=1" >处理</a>
+	        	<else />
+	        	<a href="?g=Home&m=Order&a=detail&O_ID={$data.O_ID}" >详情</a>
+	        	</if>
+	        	</div></td>
+	        
+      	</tr>
+      </volist>
+    </table>
+    
+    </td>
+  </tr>
+  <tr>
+  	<td height="20" bgcolor="#FFFFFF" class="pageToolbar" align="left">{$page}</td>
+  </tr>
+    </table>
+</form>
+</div>
+</div>
+</body>

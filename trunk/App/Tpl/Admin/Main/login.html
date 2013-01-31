@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><PHP>echo getSysTitle();</PHP></title>
+<link href="__CSS__/login.css" rel="stylesheet" type="text/css" />
+<script src="__JS__/jquery-1.6.2.min.js"></script>
+<script>
+$(document).ready(function(){
+	$("#image_yz").bind('click',function(){
+		//为了防止IE缓存 增加了tmp参数
+		$(this).attr('src','?g=Admin&m=Main&a=checkImage'+'&tmp='+Math.random());
+	});
+});
+
+function login(){
+	var url="userName="+encodeURI($("#userName").val())+"&userPwd="+encodeURI($("#userPwd").val())+"&yzm="+encodeURI($("#yzm").val());
+	$.ajax({
+		   type: "POST",
+		   url: "?g=Admin&m=Main&a=checkUser",
+		   data: url,
+		   success: function(msg){
+		     if(msg=='2'){
+		    	$("#errDiv").css('display','');
+		    	$("#errAlert").html('验证码错误');
+		     }else if(msg=='3'){
+		    	 $("#errDiv").css('display','');
+			     $("#errAlert").html('用户错误');
+		     }
+		     else if(msg=='4'){
+		    	 $("#errDiv").css('display','');
+			     $("#errAlert").html('密码错误');
+		     }
+		     else if(msg=='5'){
+		    	 $("#errDiv").css('display','');
+			     $("#errAlert").html('您无权登录');
+		     }else{
+		    	 $("#errDiv").css('display','none');
+		    	 //验证正确进入后台主页面
+		    	 window.location.href="?g=Admin&m=Main&a=index";
+		     }
+		   }
+		}); 
+}
+</script>
+</head>
+<body>
+
+    <div id="login">
+	
+	     <div id="top">
+		      <div id="top_left"><img src="__PUBLIC__/images/login_03.gif" /></div>
+			  <div id="top_center"></div>
+		 </div>
+		 
+		 <div id="center">
+		      <div id="center_left"></div>
+			  <div id="center_middle">
+			  	
+			       <div id="user">用 　户　
+			         <input type="text" name="userName" id="userName" />
+			       </div>
+				   <div id="password">密　码　&nbsp;
+				     <input type="password" name="userPwd"  id="userPwd"/>
+				   </div>
+				   <div id="yanzhengma">验证码　
+				     <input type="text" name="yzm" id="yzm" style="width:54px;" />
+				     <image align="middle" title="看不清,换一张" id="image_yz" src="?g=Admin&m=Main&a=checkImage" />
+				   </div>
+				   <div id="btn"><a href="#" onclick="login();return false;">登录</a><a href="#" onclick="clear();return false;">清空</a></div>
+				   
+			  	
+			  </div>
+			  <div id="center_right"></div>		 
+		 </div>
+		 <div id="down">
+		      <div id="down_left">
+			      <div id="inf" >
+                       <span class="inf_text"></span>
+					   <span class="copyright"></span>
+			      </div>
+			  </div>
+			  <div id="down_center"><div id="errDiv" style="margin-left:15px;width:100px;font-size:13px;height:30px;line-height:30px;color:#EEB035;display:none"><img width="25px" height="25px" src="__PUBLIC__/images/table/debugInfo.gif" align="absmiddle" /><span style="padding-left:2px;" id="errAlert"></span></div></div>		 
+		 </div>
+
+	</div>
+</body>
+</html>

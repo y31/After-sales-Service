@@ -1,0 +1,61 @@
+<script>
+function quit(){
+	$.ajax({
+		   type: "POST",
+		   url: "?g=Home&m=Index&a=logout",
+		   data: '',
+		   success: function(msg){
+			   var type='1';
+				var info="退出成功！";
+				var url="?g=Home&m=Member&a=login";
+				if(msg=="srv"){
+					url="?g=Home&m=Member&a=srvlogin";
+				}
+				
+			   window.location.href="?g=Home&m=Index&a=info&type="+type+"&info="+encodeURI(info)+"&url="+encodeURIComponent(url);
+				
+		   }
+	});
+	
+}
+function cpwd(){
+	 window.location.href="?g=Home&m=Member&a=upwd";
+}
+function cinfo(){
+	window.location.href="?g=Home&m=Member&a=uinfo";
+}
+</script>
+<style>
+#haction a{
+	
+		color:#F27F02;
+	
+}
+</style>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<div style="padding-top:3px;">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" id="haction">
+	<tr>
+		<td align="right">
+			<div style="padding-right:40px;color:#F27F02;text-align:right;background-color:#DCDCDC;">
+			<php>
+			if(ExSession::getSession()->getRealName()){
+			 	echo "您好,".ExSession::getSession()->getRealName();
+			}else{
+				</php>
+					<a href="?g=Home&m=Member&a=login&sid={$orderNO}" >[登录]</a>
+				<php>
+			}
+			</php>
+			<php>
+			if(ExSession::getSession()->getRealName()){
+			</php>
+			&nbsp;&nbsp;<a href="#" onclick="cpwd();return false;" >[修改密码]</a>
+			&nbsp;&nbsp;<a href="#" onclick="cinfo();return false;" >[修改信息]</a>
+			&nbsp;&nbsp;<a href="#" onclick="quit();return false;" >[退出]</a>
+			<php>}</php>
+			</div>
+		</td>
+	</tr>
+</table>
+</div>

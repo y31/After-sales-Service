@@ -1,0 +1,87 @@
+<include file="Public:html:inHeader" />
+<div class="mainbody">
+	<include file="Public:html:header" />
+	<div class="mainContent">
+	  <div class="hAction">
+			<!-- 控制Action -->
+			<include file="Public:html:hAction" />
+	  </div>
+	  <div id="homemenu">
+	  		<!-- 左边菜单 -->
+	  		<include file="Public:html:menu" menu="{$menu}" />
+	  </div>
+	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	  <style>
+		.content{
+			background-color:#F9F9F9;
+			width:750px;
+			height:440px;
+			margin-left:95px;
+		}
+		#info{
+			font-size:15px;
+			color:#FF7625;
+			font-weight:bold ;
+		}
+	  </style>
+	  <div id="homecontent">
+	  		<!-- 右边主体 -->
+	  		<div id="container">
+			<div class="content">
+			<form action="?g=Home&m=Index&a=confirmOrder" method="post" id="orderForm" class="registerform">
+				<div style="padding-top:90px;">
+					<table border=0 cellspacing=0 cellpadding=0 width="100%">
+						<tr>
+							<td width="190px">
+								&nbsp;
+							</td>
+							<td width="70px" align="right">
+							    <if condition="$type eq 1">
+								<img src="__PUBLIC__/images/home/ok.png" width="50"  height="40"  align="absmiddle">
+								<else/>
+								<img src="__PUBLIC__/images/home/error.png" width="50"  height="40" align="absmiddle">
+								</if>
+							</td>
+							<td width="400px" align="left">
+								<div style="padding-top:15px;padding-left:20px;font-size:15px;" id="info">
+								{$info|default='系统错误'}
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" align="center">
+								<div style="background:url('__PUBLIC__/images/home/line.png') repeat-x;width:500px;">
+								&nbsp;
+								</div>
+								<div style="font-size:13px;padding-top:10px">
+								<span id="second">5</span>秒后系统自动跳转，如果浏览器不支持跳转，请点击 <a href="{$url}">这里</a>
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				</form>
+			</div>
+			</div>
+	  </div>
+	</div>
+	<div class="mainContent1">
+		<include file="Public:html:links"/>
+	</div>
+	<include file="Public:html:footer" />
+</div>
+<include file="Public:html:inFooter" />
+<script>
+  	var _second=5;//5秒钟倒计时
+  	var timerID;
+  	function showtime(){
+  		_second--;
+  		if(_second<1){
+  			window.clearInterval(timerID);  
+  			window.location.href="{$url}";
+  		}else{
+  			document.getElementById("second").innerHTML=_second;
+  		}
+  	} 
+  	timerID=window.setInterval("showtime()", 1000);    
+</script>
